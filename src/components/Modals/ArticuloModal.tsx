@@ -73,7 +73,7 @@ const ArticuloModal = ({
     proveedorPred: articulo?.proveedorPred || 0,
     metodoPred: articulo?.metodoPred || "",
   };
-  // const [valoresCalculados, setValoresCalculados] = useState({ initialValues });
+  
   //CREATE-UPDATE
   const handleSaveUpdate = async (art: Articulo) => {
     try {
@@ -85,8 +85,6 @@ const ArticuloModal = ({
         await ArticuloService.updateArticulo(art);
         toast.success("Artículo actualizado con éxito");
       }
-
-
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error");
@@ -95,27 +93,21 @@ const ArticuloModal = ({
     refreshData(prevState => !prevState);
   };
 
-  // const handleCalculate = async () => {
-  //   try {
-  //     if (!articulo) {
-  //       throw new Error("No hay un artículo seleccionado para calcular");
-  //     }
-  //     const updatedValores = await ArticuloService.calcularTodo(articulo.id); // Ajusta el método según tu lógica
-  //     setValoresCalculados({
-  //       cgi: updatedValores.cgi,
-  //       demandaAnual: updatedValores.demandaAnual,
-  //       stockSeguridad: updatedValores.stockSeguridad,
-  //       loteOptimo: updatedValores.loteOptimo,
-  //       puntoPedido: updatedValores.puntoPedido,
-  //       cantidadMaxima: updatedValores.cantidadMaxima,
-  //       cantidadAPedir: updatedValores.cantidadAPedir
-  //     });
-  //     toast.success("Cálculo completado con éxito");
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Error al calcular valores del artículo");
-  //   }
-  // };
+  // const [calculado, setCalculado] = useState({ initialValues });
+
+  const handleCalculate = async () => {
+    try {
+      await ArticuloService.calcularTodo(articulo.id)
+      toast.success("Valores calculados",{
+        position: "top-center",
+      })
+      console.log("Calculand")
+      onHide();
+      refreshData(prevState => !prevState);
+    } catch (error) {
+      toast.error("Ocurrió un error");
+    }
+  };
 
   //DELETE
   const handleDelete = async () => {
@@ -129,7 +121,7 @@ const ArticuloModal = ({
       refreshData(prevState => !prevState);
     } catch (error) {
       console.error(error);
-      toast.error("Ocurrió un error");
+      toast.error("Ocurrió un error al eliminar");
     };
   }
 
@@ -208,7 +200,7 @@ const ArticuloModal = ({
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>Cerrar</Button>
-            <Button variant="primary" onClick={onHide}>Calcular Valores</Button>
+            <Button variant="primary" onClick={handleCalculate}>Calcular Valores</Button>
           </Modal.Footer>
         </Modal>
       ) : (

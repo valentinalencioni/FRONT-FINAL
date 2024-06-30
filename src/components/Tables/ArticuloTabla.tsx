@@ -1,7 +1,6 @@
 import { Articulo } from "../../types/Articulo";
 
-import DeleteButton from "../DeleteButton/DeleteButton";
-
+import EditButton from "../EditButton/EditButton"
 import { useNavigate } from "react-router-dom";
 import ArticuloModal from "../Modals/ArticuloModal";
 import { useState, useEffect } from "react";
@@ -12,7 +11,8 @@ import { ProveedorArticulo } from "../../types/ProveedorArticulo";
 import { ProveedorArticuloService } from "../../services/ProveedorArticuloService";
 import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
-import { EditButton } from "../EditButton/EditButton";
+import DetalleButton from "../DetalleButton/DetalleButton";
+import DeleteButton from "../DeleteButton/DeleteButton";
 
 
 
@@ -125,12 +125,13 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b">{articulo.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}</td>
                                
                                 <td className="py-2 px-4 border-b">
-                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded" onClick={() => handleClick('Ver detalle de artículo', articulo, ModalType.DETAIL)}>
-                                        Ver Detalle
-                                    </button>
+                                    {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} /> }
                                 </td>
                                 <td className="py-2 px-4 border-b">
-                                    {/* <EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} /> */}
+                                    {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} /> }
+                                </td>
+                                <td className="py-2 px-4 border-b">
+                                    {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} /> }
                                 </td>
                             </tr>
 

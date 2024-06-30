@@ -57,8 +57,8 @@ export const ArticuloService = {
         });
     },
 
-    calcularTodo: async (articuloId: number): Promise<Articulo> => {
-        const response = await fetch(`${BASE_URL}/api/v1/articulos/calculos/${articuloId}`, {
+    calcularTodo: async (id: number): Promise<Articulo> => {
+        const response = await fetch(`${BASE_URL}/api/v1/articulos/calculos/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

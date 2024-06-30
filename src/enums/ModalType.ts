@@ -5,5 +5,4 @@ export enum ModalType{
     DELETE,
     DETAIL,
     VIEW,
-
 }
