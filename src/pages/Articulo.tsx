@@ -1,8 +1,12 @@
+import ArticuloTabla from "../components/Tables/ArticuloTabla"
 
 const Articulo = () => {
   return (
-    <div>Articulo</div>
-  )
-}
+    <div>
+        <ArticuloTabla/>
+    </div>
+);
+};
+
 
 export default Articulo
