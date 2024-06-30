@@ -26,7 +26,7 @@ export const VentaService = {
             throw error;
         }
     },
-    createVenta: async (articulosSeleccionados: { articulo: Articulo, cantidad: number, invalid: boolean }[]): Promise<string> => {
+    createVenta: async (articulosSeleccionados: { articulo: Articulo, cantidad: number, invalid: boolean }[]): Promise<Venta> => {
         // Filtramos los artículos que no sean válidos
         const validArticulos = articulosSeleccionados.filter(as => !as.invalid).map(as => ({
             articulo_id: as.articulo.id,

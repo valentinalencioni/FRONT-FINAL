@@ -30,4 +30,7 @@ export const ProveedorArticuloService={
         const data=await response.json();
         return data;
     },
+    
+
+
 }

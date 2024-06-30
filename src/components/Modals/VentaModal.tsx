@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModalType } from "../../enums/ModalType";
 import { Articulo } from "../../types/Articulo";
 import { Venta } from "../../types/Venta";
@@ -87,28 +87,32 @@ const VentaModal = ({
     };
 
 
-    function handleCantidadChange(id: number, cantidad: number) {
-        throw new Error("Function not implemented.");
-    }
+    const handleCantidadChange = (articuloId: number, nuevaCantidad: number) => {
+        setArticulosSeleccionados(prevArticulos =>
+            prevArticulos.map(as =>
+                as.articulo.id === articuloId ? { ...as, cantidad: nuevaCantidad, invalid: nuevaCantidad < 0 || nuevaCantidad > as.articulo.stockActual } : as
+            )
+        );
+    };
 
     return (
         <>
-        {/* {modalType === ModalType.DETAIL ?  (
+        {modalType === ModalType.DETAIL ?  (
             <>  
             <Modal show={show} onHide={onHide} centered backdrop="static">
                 <Modal.Header closeButton>
                     <Modal.Title>{nombre}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                <VentaArticuloTable ventaID={venta.id} />
-                </Modal.Body>
+                {/* <Modal.Body>
+                 <VentaArticuloTabla ventaID={venta.id} />
+                </Modal.Body> */}
                 <Modal.Footer>
 
                 </Modal.Footer>
 
             </Modal>
             </>
-        ) :( */}
+        )  :(
         <div >
         <Modal show={show} onHide={handleCancelar} centered className="l" style={{paddingTop:'400px'}}>
             <Modal.Header closeButton >
@@ -167,8 +171,7 @@ const VentaModal = ({
             </Modal.Footer>
         </Modal>
         </div>
-        {/* )
-    } */}
+        )}
         </>
     );
 
@@ -176,6 +179,3 @@ const VentaModal = ({
 
 export default VentaModal
 
-function useEffect(arg0: () => void, arg1: never[]) {
-    throw new Error("Function not implemented.");
-}

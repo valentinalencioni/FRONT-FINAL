@@ -66,6 +66,7 @@ const ArticuloModal = ({
     };
 
     fetchProveedores();
+    fetchProvArt();
   }, []);
   const initialValues = {
     id: articulo?.id || 0,
@@ -85,6 +86,7 @@ const ArticuloModal = ({
     tiempoRevision: articulo?.tiempoRevision || 0,
     proveedorPred: articulo?.proveedorPred || 0,
     metodoPred: articulo?.metodoPred || "",
+    nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
   };
 
   //CREATE-UPDATE
@@ -93,6 +95,7 @@ const ArticuloModal = ({
       const isNew = art.id === 0;
       if (isNew) {
         await ArticuloService.createArticulo(art);
+        
         toast.success("Artículo creado con éxito");
       } else {
         await ArticuloService.updateArticulo(art);
@@ -124,13 +127,13 @@ const ArticuloModal = ({
 
   //DELETE
   const handleDelete = async () => {
-    
+
     try {
       await ArticuloService.deleteArticulo(articulo.id);
       toast.success("Artículo eliminado", {
         position: "top-center",
       })
-    
+
       console.log("Voy a borrar")
     } catch (error) {
       console.error(error);
@@ -279,34 +282,35 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                 <Form.Group className="mb-4">      {/*REVISAR */}
-                  <FormLabel className="block text-gray-700">Proveedor Articulo</FormLabel>
-                  <Form.Control
-                    as="select"
-                    name="provArt"
-                    value={formik.values.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}
-                    onChange={(e) => {
-                      const selectedId = Number(e.target.value); // Convertir a número
-                      const provArtSelec = provArt.find(prov => articulo.id ? prov.articulo.id === selectedId : 'Sin prveedor') ;    //proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'
-                      setprovArtSelec(provArtSelec);
-                      formik.setFieldValue("provArt", provArtSelec || { id: '' });
-                    }}
-                    onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.modeloInventario && !!formik.errors.modeloInventario}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  >
-                    <option value="">Selecciona un Proveedor</option>
-                    {Object.values(provArt).map((prov) => (
-                      <option key={prov.id} value={prov.id}>
-                        {prov.precioArticuloProveedor}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.modeloInventario}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
+                {!isNew && (
+                  <Form.Group className="mb-4">
+                    <Form.Label className="block text-gray-700">Proveedor Articulo</Form.Label>
+                    <Form.Control
+                      as="select"
+                      name="provArt"
+                      value={proveedorSeleccionado?.id}
+                      onChange={(e) => {
+                        const selectedId = Number(e.target.value); // Convertir a número
+                        const provArtSelec = provArt.find(prov => prov.proveedor.id === selectedId) || null;
+                        setprovArtSelec(provArtSelec);
+                        formik.setFieldValue("provArt", provArtSelec);
+                      }}
+                      onBlur={formik.handleBlur}
+                      isInvalid={formik.touched.proveedorPred && !!formik.errors.proveedorPred}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    >
+                      <option value="">Selecciona un Proveedor</option>
+                      {provArt.map((prov) => (
+                        <option key={prov.proveedor.id} value={prov.proveedor.id}>
+                          {proveedores.find(p => p.id === prov.proveedor.id)?.nombreProveedor}
+                        </option>
+                      ))}
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.proveedorPred}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                )}
                 {/* stockactual */}
 
                 {isNew && (

@@ -14,16 +14,20 @@ export const OrdenCompraService = {
         return data;
     },
 
-    createOrdenCompra: async (ordenCompra: OrdenCompra): Promise<OrdenCompra> => {
-        const response = await fetch(`${BASE_URL}/api/v1/ordenCompra`, {
-            method: "POST",
+    createOrdenCompra: async (ordencompra: OcDTO): Promise <OcDTO> =>{
+        const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/nueva`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(ordenCompra)
+            body: JSON.stringify(ordencompra)
         });
-        const data = await response.json();
-        return data;
+
+        if (!response.ok) {
+            throw new Error('Error al crear la orden');
+        }
+
+        return await response.json();
     },
 
     updateOrdenCompra: async (ordenCompra: OrdenCompra): Promise<OrdenCompra> => {
