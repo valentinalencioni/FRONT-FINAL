@@ -1,8 +1,12 @@
+import VentaTabla from "../components/Tables/VentaTabla"
 
-function Venta() {
+const Venta = () => {
   return (
-    <div>Venta</div>
-  )
-}
+    <div>
+        <VentaTabla/>
+    </div>
+);
+};
+
 
 export default Venta

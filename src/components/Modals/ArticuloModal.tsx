@@ -35,6 +35,7 @@ const ArticuloModal = ({
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState<Proveedor | null>(null);
   const [isNew, setIsNew] = useState(articulo.id === 0);
   const [provArt, setProvArt] = useState<ProveedorArticulo[]>([]);
+  const [provArtSelec, setprovArtSelec] = useState<ProveedorArticulo | null>(null);
 
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const ArticuloModal = ({
       }
     };
 
-    const fetchProvArt= async () => {
+    const fetchProvArt = async () => {
       try {
         const response = await ProveedorArticuloService.getProvArt(articulo.id);
         setProvArt(response);
@@ -148,8 +149,12 @@ const ArticuloModal = ({
       .positive('El tiempo de revisión debe ser positivo')
       .required('Se requiere el tiempo de revisión')
       .nonNullable('El tiempo de revisión no puede ser nulo'),
-    stockActual: Yup.number().integer('El stock actual debe ser un entero')
-
+    stockActual: Yup.number().integer('El stock actual debe ser un entero').required('Este es un campo obligatorio').positive('El stock actual debe ser positivo')
+      .nonNullable('El tiempo de revisión no puede ser nulo'),
+    modeloInventario: Yup.mixed().oneOf(Object.values(ModeloInventario)).required('Este es un campo obligatorio'),
+    proveedorPred: Yup.object().shape({
+      id: Yup.number().required('Debe seleccionar un proveedor')
+    }).nullable().required('Debe seleccionar un proveedor')
 
   });
 
@@ -272,28 +277,33 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                {/* <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Proveedor</FormLabel>
+                 <Form.Group className="mb-4">      {/*REVISAR */}
+                  <FormLabel className="block text-gray-700">Proveedor Articulo</FormLabel>
                   <Form.Control
                     as="select"
-                    name="proveedores"
-                    value={proveedorSeleccionado?.id}
-                    onChange={formik.handleChange}
+                    name="provArt"
+                    value={formik.values.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}
+                    onChange={(e) => {
+                      const selectedId = Number(e.target.value); // Convertir a número
+                      const provArtSelec = provArt.find(prov => articulo.id ? prov.articulo.id === selectedId : 'Sin prveedor') ;    //proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'
+                      setprovArtSelec(provArtSelec);
+                      formik.setFieldValue("provArt", provArtSelec || { id: '' });
+                    }}
                     onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.proveedorPred ? articulo.proveedorPred.nombreProveedor  && !!formik.errors.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}
+                    isInvalid={formik.touched.modeloInventario && !!formik.errors.modeloInventario}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   >
-                    <option value="">Selecciona un Modelo de Inventario</option>
-                    {Object.values(provArt).map((modelo) => (
-                      <option key={modelo} value={modelo}>
-                        {modelo.replace('_', ' ').toLowerCase()}
+                    <option value="">Selecciona un Proveedor</option>
+                    {Object.values(provArt).map((prov) => (
+                      <option key={prov.id} value={prov.id}>
+                        {prov.precioArticuloProveedor}
                       </option>
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.proveedores}
+                    {formik.errors.modeloInventario}
                   </Form.Control.Feedback>
-                </Form.Group> */}
+                </Form.Group>
 
                 {/* stockactual */}
 
@@ -313,6 +323,37 @@ const ArticuloModal = ({
                       {formik.errors.stockActual}
                     </Form.Control.Feedback>
                   </Form.Group>
+                )}
+
+                {isNew && (
+
+                  <Form.Group className="mb-4">
+                    <FormLabel className="block text-gray-700">Proveedor</FormLabel>
+                    <Form.Control
+                      as="select"
+                      value={formik.values.proveedorPred?.id || ''}
+                      onChange={(e) => {
+                        const selectedId = Number(e.target.value); // Convertir a número
+                        const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
+                        setProveedorSeleccionado(selectedProveedor);
+                        formik.setFieldValue("proveedorPred", selectedProveedor || { id: '' });
+                      }}
+                      onBlur={formik.handleBlur}
+                      isInvalid={formik.touched.proveedorPred && !!formik.errors.proveedorPred?.id}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    >
+                      <option value="">Selecciona un Proveedor</option>
+                      {Object.values(proveedores).map(proveedor => (
+                        <option key={proveedor.id} value={proveedor.id}>
+                          {proveedor.nombreProveedor}
+                        </option>
+                      ))}
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.proveedorPred?.id}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
                 )}
 
                 <Form.Group className="mb-4">
@@ -338,32 +379,7 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                {/* <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Proveedor</FormLabel>
-                  <Form.Control
-                    as="select"
-                    value={proveedorSeleccionado?.id}
-                    onChange={(e) => {
-                      const selectedId = Number(e.target.value); // Convertir a número
-                      const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
-                      setProveedorSeleccionado(selectedProveedor);
-                      formik.setFieldValue("proveedorPred", selectedProveedor);
-                    }}
-                    onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.proveedorPred?.id && !!formik.errors.proveedorPred?.id}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  >
-                    <option value="">Selecciona un Proveedor</option>
-                    {Object.values(proveedores).map(proveedor => (
-                      <option key={proveedor.id} value={proveedor.id}>
-                        {proveedor.nombreProveedor}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.proveedorPred?.id}
-                  </Form.Control.Feedback>
-                </Form.Group> */}
+
 
                 <ModalFooter className="mt-4 flex justify-end">
                   <Button variant="secondary" onClick={onHide} className="mr-2">Cancelar</Button>
