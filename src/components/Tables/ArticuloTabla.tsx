@@ -102,6 +102,18 @@ function ArticuloTable() {
             >
                 Nuevo articulo
             </button>
+            <button
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+                onClick={() => navigate('/articulos-faltantes')}
+            >
+                Artículos Faltantes
+            </button>
+            <button
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => navigate('/articulos-a-reponer')}
+            >
+                Artículos a Reponer
+            </button>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-300">
                     <thead>
@@ -110,28 +122,28 @@ function ArticuloTable() {
                             <th className="py-2 px-4 border-b">Precio</th>
                             <th className="py-2 px-4 border-b">Stock actual</th>
                             <th className="py-2 px-4 border-b">Proveedor predeterminado</th>
-                            
+
                             <th className="py-2 px-4 border-b">Ver detalle</th>
                             <th className="py-2 px-4 border-b">Editar</th>
                             <th className="py-2 px-4 border-b">Borrar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {articulos.map(articulo=> (
+                        {articulos.map(articulo => (
                             <tr>
                                 <td className="py-2 px-4 border-b">{articulo.nombre}</td>
                                 <td className="py-2 px-4 border-b"> {Number(articulo.precio).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                 <td className="py-2 px-4 border-b">{articulo.stockActual}</td>
                                 <td className="py-2 px-4 border-b">{articulo.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}</td>
-                               
+
                                 <td className="py-2 px-4 border-b">
-                                    {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} /> }
+                                    {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}
                                 </td>
                                 <td className="py-2 px-4 border-b">
-                                    {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} /> }
+                                    {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} />}
                                 </td>
                                 <td className="py-2 px-4 border-b">
-                                    {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} /> }
+                                    {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
                                 </td>
                             </tr>
 

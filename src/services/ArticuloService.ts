@@ -44,8 +44,6 @@ export const ArticuloService = {
         const data = await response.json();
         return data;
     },
-    
-    
 
     deleteArticulo: async (id: number): Promise<void> => {
         await fetch(`${BASE_URL}/api/v1/articulos/baja/${id}`, {
@@ -69,6 +67,20 @@ export const ArticuloService = {
         }
         const data = await response.json();
         return data;
-    }
+    },
+    
+    getArticulosAReponer: async() : Promise <Articulo []> =>{
+        const response = await fetch (`${BASE_URL}/api/v1/articulos/reponer`);
+        const data= await response.json();
+        return data;
+
+    },
+
+    getArticulosFaltantes: async() : Promise <Articulo []> =>{
+        const response = await fetch (`${BASE_URL}/api/v1/articulos/faltantes`);
+        const data= await response.json();
+        return data;
+
+    },
 
 }

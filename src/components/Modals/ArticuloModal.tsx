@@ -11,6 +11,8 @@ import * as Yup from "yup";
 import { Button, Form, FormLabel, ModalFooter, ModalTitle, Table } from "react-bootstrap";
 import { ProveedorService } from "../../services/ProveedorService";
 import { ModalType } from "../../enums/ModalType";
+import { ProveedorArticulo } from "../../types/ProveedorArticulo";
+import { ProveedorArticuloService } from "../../services/ProveedorArticuloService";
 
 type ArticuloModalProps = {
   show: boolean;
@@ -32,7 +34,7 @@ const ArticuloModal = ({
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState<Proveedor | null>(null);
   const [isNew, setIsNew] = useState(articulo.id === 0);
-
+  const [provArt, setProvArt] = useState<ProveedorArticulo[]>([]);
 
 
   useEffect(() => {
@@ -46,6 +48,16 @@ const ArticuloModal = ({
       try {
         const response = await ProveedorService.getProveedores();
         setProveedores(response);
+      } catch (error) {
+        console.error(error);
+        toast.error("Error al cargar proveedores");
+      }
+    };
+
+    const fetchProvArt= async () => {
+      try {
+        const response = await ProveedorArticuloService.getProvArt(articulo.id);
+        setProvArt(response);
       } catch (error) {
         console.error(error);
         toast.error("Error al cargar proveedores");
@@ -73,7 +85,7 @@ const ArticuloModal = ({
     proveedorPred: articulo?.proveedorPred || 0,
     metodoPred: articulo?.metodoPred || "",
   };
-  
+
   //CREATE-UPDATE
   const handleSaveUpdate = async (art: Articulo) => {
     try {
@@ -98,7 +110,7 @@ const ArticuloModal = ({
   const handleCalculate = async () => {
     try {
       await ArticuloService.calcularTodo(articulo.id)
-      toast.success("Valores calculados",{
+      toast.success("Valores calculados", {
         position: "top-center",
       })
       console.log("Calculand")
@@ -260,6 +272,29 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
+                {/* <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Proveedor</FormLabel>
+                  <Form.Control
+                    as="select"
+                    name="proveedores"
+                    value={proveedorSeleccionado?.id}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.proveedorPred ? articulo.proveedorPred.nombreProveedor  && !!formik.errors.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  >
+                    <option value="">Selecciona un Modelo de Inventario</option>
+                    {Object.values(provArt).map((modelo) => (
+                      <option key={modelo} value={modelo}>
+                        {modelo.replace('_', ' ').toLowerCase()}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.proveedores}
+                  </Form.Control.Feedback>
+                </Form.Group> */}
+
                 {/* stockactual */}
 
                 {isNew && (
@@ -303,7 +338,7 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-4">
+                {/* <Form.Group className="mb-4">
                   <FormLabel className="block text-gray-700">Proveedor</FormLabel>
                   <Form.Control
                     as="select"
@@ -319,7 +354,7 @@ const ArticuloModal = ({
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   >
                     <option value="">Selecciona un Proveedor</option>
-                    {proveedores.map(proveedor => (
+                    {Object.values(proveedores).map(proveedor => (
                       <option key={proveedor.id} value={proveedor.id}>
                         {proveedor.nombreProveedor}
                       </option>
@@ -328,9 +363,7 @@ const ArticuloModal = ({
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.proveedorPred?.id}
                   </Form.Control.Feedback>
-                </Form.Group>
-
-
+                </Form.Group> */}
 
                 <ModalFooter className="mt-4 flex justify-end">
                   <Button variant="secondary" onClick={onHide} className="mr-2">Cancelar</Button>
