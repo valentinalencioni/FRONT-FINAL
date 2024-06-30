@@ -1,5 +1,5 @@
 import { MetodoPrediccion } from "../enums/MetodoPrediccion";
-import { ModeloInventario } from "./ModeloInventario";
+import { ModeloInventario } from "../enums/ModeloInventario";
 import { Proveedor } from "./Proveedor";
 
 
@@ -19,6 +19,6 @@ export interface Articulo{
     cantidadMaxima:number;
     cantidadAPedir:number;
     tiempoRevision:number;
-    proveedorpred:Proveedor;
+    proveedorPred: Proveedor;
     metodoPred: MetodoPrediccion;
 }
