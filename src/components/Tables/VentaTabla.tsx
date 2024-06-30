@@ -3,6 +3,9 @@ import { VentaService } from "../../services/VentaService";
 import { ModalType } from "../../enums/ModalType";
 import DetalleButton from "../DetalleButton/DetalleButton";
 import { Venta } from "../../types/Venta";
+import VentaModal from "../Modals/VentaModal";
+//Import VentaModal
+
 function VentaTabla() {
     const [ventas, setVentas] = useState<Venta[]>([]);
     const [refreshData, setRefreshData] = useState(false);
@@ -22,22 +25,36 @@ function VentaTabla() {
     }, [refreshData]);
     console.log(JSON.stringify(ventas, null, 2));
     //Aca voy a implementar logica para crear venta y seteo valores necesarios
-    // const 
-    // const [venta, setVenta] = useState <Venta>(initializableNewVenta);
-    // const [showModal, setShowModal] = useState(false);
-    // const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
-    // const [title, setTitle] = useState("");
-    
-    // const handleClick = (title: string, venta: Venta, modal: ModalType) => {
-    //     setVenta(venta);
-    //     setTitle(title);
-    //     setShowModal(true);
-    //     setModalType(modal);
-    // };
+
+    const initializableNewVenta = ():Venta =>({
+        id:0,
+        fechaVenta: new Date (),
+        totalVenta: 0,
+    });
+    const [venta, setVenta] = useState<Venta>(initializableNewVenta);
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
+    const [nombre, setNombre] = useState("");
+
+    const handleClick = (nombre: string, venta: Venta, modal: ModalType) => {
+        setVenta(venta);
+        setNombre(nombre);
+        setShowModal(true);
+        setModalType(modal);
+    };
 
 
     return (
         <>
+            <div className="flex justify-end space-x-2 p-4">
+             <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                onClick={() => handleClick("Nueva Venta", initializableNewVenta(), ModalType.CREATE)}
+            >
+                Nueva Venta
+            </button>
+            
+        </div>
             <div>
                 <table className="min-w-full bg-white border border-gray-300">
                     <thead>
@@ -63,7 +80,7 @@ function VentaTabla() {
                 </table>
             </div>
             {/* Agregar ShowModal */}
-            {/* {showModal && (
+             {showModal && (
                 <VentaModal
                     show={showModal}
                     onHide={() => setShowModal(false)}
@@ -72,7 +89,7 @@ function VentaTabla() {
                     venta={venta}
                     refreshData={setRefreshData}
                 />
-            )} */}
+            )} 
         </>
     )
 

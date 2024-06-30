@@ -124,18 +124,20 @@ const ArticuloModal = ({
 
   //DELETE
   const handleDelete = async () => {
-    console.log("Voy a borrar")
+    
     try {
       await ArticuloService.deleteArticulo(articulo.id);
       toast.success("Artículo eliminado", {
         position: "top-center",
       })
-      onHide();
-      refreshData(prevState => !prevState);
+    
+      console.log("Voy a borrar")
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error al eliminar");
     };
+    onHide();
+    refreshData(prevState => !prevState);
   }
 
   //Esquema YUP DE VALIDACION

@@ -96,36 +96,39 @@ function ArticuloTable() {
 
     return (
         <>
-            <button
+        <div className="flex justify-start space-x-2 p-4">
+             <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
                 onClick={() => handleClick("Nuevo articulo", initializableNewArticulo(), ModalType.CREATE)}
             >
                 Nuevo articulo
             </button>
             <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
                 onClick={() => navigate('/articulos-faltantes')}
             >
                 Artículos Faltantes
             </button>
             <button
-                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4"
                 onClick={() => navigate('/articulos-a-reponer')}
             >
                 Artículos a Reponer
             </button>
+        </div>
+           
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-300">
                     <thead>
                         <tr>
-                            <th className="py-2 px-4 border-b">Articulo</th>
-                            <th className="py-2 px-4 border-b">Precio</th>
-                            <th className="py-2 px-4 border-b">Stock actual</th>
-                            <th className="py-2 px-4 border-b">Proveedor predeterminado</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Articulo</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Precio</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Stock actual</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Proveedor predeterminado</th>
 
-                            <th className="py-2 px-4 border-b">Ver detalle</th>
-                            <th className="py-2 px-4 border-b">Editar</th>
-                            <th className="py-2 px-4 border-b">Borrar</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Editar</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Borrar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,14 +139,20 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b">{articulo.stockActual}</td>
                                 <td className="py-2 px-4 border-b">{articulo.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}</td>
 
-                                <td className="py-2 px-4 border-b">
-                                    {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}
+                                <td className="py-2 px-4 border-b text-center">
+                                    <div className="d-flex justify-content-center">
+                                        {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}
+                                    </div>                                  
                                 </td>
-                                <td className="py-2 px-4 border-b">
-                                    {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} />}
+                                <td className="py-2 px-4 border-b text-center">
+                                    <div className="d-flex justify-content-center">
+                                        {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} />}
+                                    </div>                                   
                                 </td>
-                                <td className="py-2 px-4 border-b">
-                                    {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
+                                <td className="py-2 px-4 border-b text-center">
+                                    <div className="d-flex justify-content-center">
+                                          {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
+                                    </div>                              
                                 </td>
                             </tr>
 
