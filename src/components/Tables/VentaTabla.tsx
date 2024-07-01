@@ -3,6 +3,7 @@ import { VentaService } from "../../services/VentaService";
 import { ModalType } from "../../enums/ModalType";
 import VentaModal from "../Modals/VentaModal"; // Importar VentaModal
 import { Venta } from "../../types/Venta";
+import DetalleButton from "../DetalleButton/DetalleButton";
 
 function VentaTabla() {
     const [ventas, setVentas] = useState<Venta[]>([]);
@@ -31,11 +32,11 @@ function VentaTabla() {
     const [venta, setVenta] = useState<Venta>(initializableNewVenta);
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
-    const [nombre, setNombre] = useState("");
+    const [title, setTitle] = useState("");
 
-    const handleClick = (nombre: string, venta: Venta, modal: ModalType) => {
+    const handleClick = (title: string, venta: Venta, modal: ModalType) => {
         setVenta(venta);
-        setNombre(nombre);
+        setTitle(title);
         setShowModal(true);
         setModalType(modal);
     };
@@ -66,9 +67,9 @@ function VentaTabla() {
                                 <td className="py-2 px-4 border-b">{venta.id}</td>
                                 <td className="py-2 px-4 border-b">{venta.totalVenta}</td>
                                 <td className="py-2 px-4 border-b">{new Date(venta.fechaVenta).toLocaleDateString()}</td>
-                                {/* <td className="py-2 px-4 border-b">
+                                { <td className="py-2 px-4 border-b">
                                     {<DetalleButton onClick={() => handleClick("Ver detalle de venta", venta, ModalType.DETAIL)} />}
-                                </td> */}
+                                </td> }
                             </tr>
                         ))}
                     </tbody>
@@ -78,10 +79,10 @@ function VentaTabla() {
                 <VentaModal
                     show={showModal}
                     onHide={() => setShowModal(false)}
-                    nombre={nombre}
                     modalType={modalType} // Use modalType instead of ModalType
                     venta={venta}
-                    refreshData={setRefreshData}
+                    refreshData={setRefreshData} 
+                    title={title}                
                 />
             )}
         </>

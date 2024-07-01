@@ -1,4 +1,5 @@
 import { Articulo } from "../types/Articulo";
+import { DetalleVentaDTO } from "../types/DetalleVentaDTO";
 import {Venta} from "../types/Venta";
 
 const BASE_URL ='http://localhost:8082'; 
@@ -26,31 +27,31 @@ export const VentaService = {
             throw error;
         }
     },
-    createVenta: async (articulosSeleccionados: { articulo: Articulo, cantidad: number, invalid: boolean }[]): Promise<Venta> => {
-        // Filtramos los artículos que no sean válidos
-        const validArticulos = articulosSeleccionados.filter(as => !as.invalid).map(as => ({
-            articulo_id: as.articulo.id,
-            cantidad: as.cantidad
-        }));
-
-        const response = await fetch(`${BASE_URL}/nuevaVenta`, {
+    createVenta: async (detalleVentaDTO: DetalleVentaDTO[]): Promise <any> =>{
+        const response = await fetch(`${BASE_URL}/api/v1/ventas/nuevaVenta`, {
             method: 'POST',
             headers: {
-                'Accept': '*/*',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ articulos: validArticulos }),
+            body: JSON.stringify(detalleVentaDTO)
         });
 
         if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
+            throw new Error('Error al crear la venta');
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();        
     },
-    
+
+    deleteVenta: async (id: number): Promise<void> => {
+        await fetch(`${BASE_URL}/api/v1/ventas/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': '*/*',
+                'Authorization': `Bearer ` + localStorage.getItem('token'),
+            },
+        });
+    },    
 
 
 }
