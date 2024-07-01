@@ -1,4 +1,5 @@
-import {OrdenCompra} from './types/OrdenCompra'
+import { OcDTO } from '../types/OcDTO';
+import { OrdenCompra } from '../types/OrdenCompra';
 const BASE_URL = 'http://localhost:8082'; 
 
 export const OrdenCompraService = {
@@ -14,7 +15,8 @@ export const OrdenCompraService = {
         return data;
     },
 
-    createOrdenCompra: async (ordencompra: OcDTO): Promise <OcDTO> =>{
+    //Chequear promise OcDTO
+    createOrdenCompra: async (ordencompra: OcDTO): Promise <any> =>{
         const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/nueva`, {
             method: 'POST',
             headers: {

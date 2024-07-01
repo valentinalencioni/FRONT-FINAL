@@ -1,7 +1,5 @@
-import { Articulo } from "./Articulo";
-
 
 export interface OcDTO {
-    articuloId: Articulo,
+    articuloId: number,
     cantidad: number,
 }
