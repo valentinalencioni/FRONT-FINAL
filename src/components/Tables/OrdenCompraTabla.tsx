@@ -5,6 +5,8 @@ import { EstadoOrdenCompra } from "../../enums/EstadoOrdenCompra";
 import { ModalType } from "../../enums/ModalType";
 import DetalleButton from "../DetalleButton/DetalleButton";
 import OrdenCompraModal from "../Modals/OrdenCompraModal";
+import DeleteButton from "../DeleteButton/DeleteButton";
+import EditButton from "../EditButton/EditButton";
 
 function OrdenCompraTabla() {
 
@@ -88,6 +90,8 @@ function OrdenCompraTabla() {
 
               <th className="py-2 px-4 border-b bg-dark-subtle">Proveedor</th>
               <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
+              <th className="py-2 px-4 border-b bg-dark-subtle">Modificar</th>
+              <th className="py-2 px-4 border-b bg-dark-subtle">Eliminar</th>
             </tr>
           </thead>
           <tbody className="table-group-divider">
@@ -101,6 +105,16 @@ function OrdenCompraTabla() {
                 <td className="py-2 px-4 border-b text-center">
                   <div className="d-flex justify-content-center">
                     {<DetalleButton onClick={() => handleClick("Ver detalles", ordenCompra, ModalType.DETAIL)} />}
+                  </div>
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <div className="d-flex justify-content-center">
+                    {<EditButton onClick={() => handleClick("Editar orden de compra", ordenCompra, ModalType.UPDATE)} />}
+                  </div>
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <div className="d-flex justify-content-center">
+                    {<DeleteButton onClick={() => handleClick("Eliminar orden de compra", ordenCompra, ModalType.DELETE)} />}
                   </div>
                 </td>
               </tr>

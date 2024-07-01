@@ -62,6 +62,19 @@ const OrdenCompraModal = ({
     }
   };
 
+  const handleDelete = async ()=>{
+    try {
+      await OrdenCompraService.deleteOrdenCompra(ord.id);
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Orden de compra eliminada exitosamente', { position: 'top-center' });
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al eliminar la orden', { position: 'top-center' });
+    }
+  };
+
+
 
   const handleArticuloSelect = (articulo: Articulo) => {
     setArticuloSeleccionado(articulo);
@@ -75,17 +88,22 @@ const OrdenCompraModal = ({
 
   return (
     <>
-      {modalType === ModalType.DETAIL ? (
+      {modalType === ModalType.DELETE ? ( 
         <>
           <Modal show={show} onHide={onHide} centered backdrop="static">
             <Modal.Header closeButton>
               <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
-            {/* <Modal.Body>
-             <VentaArticuloTabla ventaID={venta.id} />
-            </Modal.Body> */}
+            <Modal.Body>
+              <p>¿Seguro que desea eliminar esta orden de compra?</p>
+            </Modal.Body> 
             <Modal.Footer>
-
+              <Button variant="secondary" onClick={onHide}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={handleDelete}>
+                Eliminar
+              </Button>
             </Modal.Footer>
 
           </Modal>
