@@ -4,7 +4,6 @@ import { DemandaService } from "../../services/DemandaService";
 import { ModeloInventario } from "../../enums/ModeloInventario";
 import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
-import EditButton from "../EditButton/EditButton";
 import DeleteButton from "../DeleteButton/DeleteButton";
 
 function DemandaTabla() {
@@ -22,6 +21,8 @@ function DemandaTabla() {
         };
         fetchDemandas();
     }, [refreshData]);
+    console.log(JSON.stringify(demandas, null, 2));
+
 
     const initializableNewDemanda = (): Demanda => ({
         id: 0,
