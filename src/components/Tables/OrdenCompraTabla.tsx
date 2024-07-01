@@ -98,7 +98,7 @@ function OrdenCompraTabla() {
             {results.map(ordenCompra => (
               <tr>
                 <td className="py-2 px-4 border-b">{ordenCompra.id}</td>
-                <td className="py-2 px-4 border-b"> {new Date(ordenCompra.fechaOrdenCompra).toLocaleString()}</td>
+                <td className="py-2 px-4 border-b"> {new Date(ordenCompra.fechaOrdenCompra).toLocaleDateString()}</td>
                 <td className="py-2 px-4 border-b">{Number(ordenCompra.totalOrdenCompra).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td className="py-2 px-4 border-b">{ordenCompra.estadoOrdenCompra}</td>
                 <td className="py-2 px-4 border-b">{ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : 'Sin Proveedor'}</td>

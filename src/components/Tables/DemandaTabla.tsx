@@ -92,8 +92,8 @@ function DemandaTabla() {
                         {demandas.map(demanda => (
                             <tr>
                                 <td className="py-2 px-4 border-b">{demanda.id}</td>
-                                <td className="py-2 px-4 border-b"> {new Date(demanda.fechaDesde).toLocaleString()}</td>
-                                <td className="py-2 px-4 border-b"> {new Date(demanda.fechaHasta).toLocaleString()}</td>
+                                <td className="py-2 px-4 border-b"> {new Date(demanda.fechaDesde).toLocaleDateString()}</td>
+                                <td className="py-2 px-4 border-b"> {new Date(demanda.fechaHasta).toLocaleDateString()}</td>
                                 <td className="py-2 px-4 border-b">{demanda.totalDemanda}</td>
                                 <td className="py-2 px-4 border-b">{demanda.articulo.id}</td>
                                 <td className="py-2 px-4 border-b text-center">

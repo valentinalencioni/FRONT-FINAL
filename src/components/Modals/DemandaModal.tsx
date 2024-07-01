@@ -62,6 +62,9 @@ const DemandaModal = ({
       toast.error('Error al calcular demanda', { position: 'top-center' });
     }
   };
+  
+
+
 
   const handleDelete = async () => {
     try {
@@ -80,6 +83,7 @@ const DemandaModal = ({
   const handleArticuloSelect = (articulo: Articulo) => {
     setArticuloSeleccionado(articulo);
   };
+
 
   
 
