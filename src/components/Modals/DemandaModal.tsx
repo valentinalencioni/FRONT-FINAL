@@ -29,6 +29,8 @@ const DemandaModal = ({
 }: DemandaModalProps) => {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
+  const [fechaDesde, setFechaDesde] = useState<Date>(new Date());
+  const [fechaHasta, setFechaHasta] = useState<Date>(new Date());
 
   useEffect(() => {
     const fetchArticulos = async () => {
@@ -50,8 +52,8 @@ const DemandaModal = ({
     try {
       const DemandaDTO = {
         articuloId: articuloSeleccionado?.id || 0,
-        fechaDesde: new Date (),
-        fechaHasta: new Date (),
+        fechaDesde: fechaDesde,
+        fechaHasta: fechaHasta,
       };
       await DemandaService.calculateDemanda(DemandaDTO);
       onHide();
@@ -62,7 +64,6 @@ const DemandaModal = ({
       toast.error('Error al calcular demanda', { position: 'top-center' });
     }
   };
-  
 
 
 
@@ -83,14 +84,21 @@ const DemandaModal = ({
   const handleArticuloSelect = (articulo: Articulo) => {
     setArticuloSeleccionado(articulo);
   };
+  const handleFechaDesdeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaDesde(new Date(event.target.value));
+  };
+
+  const handleFechaHastaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaHasta(new Date(event.target.value));
+  };
 
 
-  
+
 
 
   return (
     <>
-      {modalType === ModalType.DELETE ? ( 
+      {modalType === ModalType.DELETE ? (
         <>
           <Modal show={show} onHide={onHide} centered backdrop="static">
             <Modal.Header closeButton>
@@ -98,7 +106,7 @@ const DemandaModal = ({
             </Modal.Header>
             <Modal.Body>
               <p>¿Seguro que desea eliminar esta demanda?</p>
-            </Modal.Body> 
+            </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={onHide}>
                 Cancelar
@@ -130,30 +138,20 @@ const DemandaModal = ({
                     {articulos.map(articulo => (
                       <tr key={articulo.id}>
                         <td>
-                          <Form.Check
-                            type="radio"
-                            name="articulo"
-                            value={articulo.id}
-                            checked={articuloSeleccionado?.id === articulo.id}
-                            onChange={() => handleArticuloSelect(articulo)}
-                          />
-                          {articulo.nombre}
-                        </td>
-                        <td>
                           <Form.Control
                             type="date"
-                            value={new Date().toISOString().split('T')[0]}
-                            disabled
+                            value={fechaDesde.toISOString().split('T')[0]}
+                            onChange={handleFechaDesdeChange}
                           />
                         </td>
                         <td>
                           <Form.Control
                             type="date"
-                            value={new Date().toISOString().split('T')[0]}
-                            disabled
+                            value={fechaHasta.toISOString().split('T')[0]}
+                            onChange={handleFechaHastaChange}
                           />
                         </td>
-                        
+    
                       </tr>
                     ))}
                   </tbody>
