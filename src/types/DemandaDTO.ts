@@ -1,6 +1,6 @@
 
 export interface DemandaDTO{
     articuloId: number,
-    fechDesde: Date,
-    fechHasta: Date,
+    fechaDesde: Date,
+    fechaHasta: Date,
 }

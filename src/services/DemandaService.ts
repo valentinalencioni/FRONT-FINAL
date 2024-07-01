@@ -20,5 +20,14 @@ export const DemandaService ={
         });
         const data = await response.json();
         return data;
-    }
+    },
+    deleteDemanda: async (id: number): Promise<void> => {
+        await fetch(`${BASE_URL}/api/v1/demanda/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': '*/*',
+                'Authorization': `Bearer ` + localStorage.getItem('token'),
+            },
+        });
+    },
 }

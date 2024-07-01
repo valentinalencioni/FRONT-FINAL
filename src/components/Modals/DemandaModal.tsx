@@ -1,12 +1,13 @@
-
 import { useEffect, useState } from "react";
 import { ModalType } from "../../enums/ModalType";
-import { OrdenCompra } from "../../types/OrdenCompra";
+import { Demanda } from "../../types/Demanda";
 import { Articulo } from "../../types/Articulo";
 import { ArticuloService } from "../../services/ArticuloService";
-import { OrdenCompraService } from "../../services/OrdenCompraService";
+import { DemandaService } from "../../services/DemandaService";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Table } from "react-bootstrap";
+
+
 
 
 type DemandaModalProps = {
@@ -25,10 +26,9 @@ const DemandaModal = ({
   modalType,
   dem,
   refreshData,
-}: DemandaProps) => {
+}: DemandaModalProps) => {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
-  const [cantidad, setCantidad] = useState<number>(0);
 
   useEffect(() => {
     const fetchArticulos = async () => {
@@ -48,29 +48,30 @@ const DemandaModal = ({
 
   const handleSaveUpdate = async () => {
     try {
-      const ocDTO = {
+      const DemandaDTO = {
         articuloId: articuloSeleccionado?.id || 0,
-        cantidad: cantidad,
+        fechaDesde: new Date (),
+        fechaHasta: new Date (),
       };
-      await OrdenCompraService.createOrdenCompra(ocDTO);
+      await DemandaService.calculateDemanda(DemandaDTO);
       onHide();
       refreshData(prevState => !prevState);
-      toast.success('Orden compra creada exitosamente', { position: 'top-center' });
+      toast.success('Demanda calculada exitosamente', { position: 'top-center' });
     } catch (error) {
-      console.error('Error al crear la orden:', error);
-      toast.error('Error al crear la orden', { position: 'top-center' });
+      console.error('Error al calcular la demanda:', error);
+      toast.error('Error al calcular demanda', { position: 'top-center' });
     }
   };
 
-  const handleDelete = async ()=>{
+  const handleDelete = async () => {
     try {
-      await OrdenCompraService.deleteOrdenCompra(ord.id);
+      await DemandaService.deleteDemanda(dem.id);
       onHide();
       refreshData(prevState => !prevState);
-      toast.success('Orden de compra eliminada exitosamente', { position: 'top-center' });
+      toast.success('Demanda eliminada exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error('Error al eliminar la orden', { position: 'top-center' });
+      toast.error('Error al eliminar la demanda', { position: 'top-center' });
     }
   };
 
@@ -78,12 +79,9 @@ const DemandaModal = ({
 
   const handleArticuloSelect = (articulo: Articulo) => {
     setArticuloSeleccionado(articulo);
-    setCantidad(0);
   };
 
-  const handleCantidadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCantidad(Number(event.target.value));
-  };
+  
 
 
   return (
@@ -95,7 +93,7 @@ const DemandaModal = ({
               <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <p>¿Seguro que desea eliminar esta orden de compra?</p>
+              <p>¿Seguro que desea eliminar esta demanda?</p>
             </Modal.Body> 
             <Modal.Footer>
               <Button variant="secondary" onClick={onHide}>
@@ -120,8 +118,8 @@ const DemandaModal = ({
                   <thead>
                     <tr>
                       <th>Seleccionar articulo</th>
-                      <th>Stock Actual</th>
-                      <th>Cantidad a Pedir</th>
+                      <th>Fecha desde</th>
+                      <th>Fecha hasta</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,20 +135,19 @@ const DemandaModal = ({
                           />
                           {articulo.nombre}
                         </td>
-                        <td>{articulo.stockActual}</td>
                         <td>
-                        {articuloSeleccionado?.id === articulo.id && (
-                            <Form.Control
-                              type="number"
-                              name="cantidad"
-                              value={cantidad}
-                              onChange={handleCantidadChange}
-                              min={0}
-                              max={articulo.stockActual}
-                              step={1}
-                              required
-                            />
-                          )}
+                          <Form.Control
+                            type="date"
+                            value={new Date().toISOString().split('T')[0]}
+                            disabled
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="date"
+                            value={new Date().toISOString().split('T')[0]}
+                            disabled
+                          />
                         </td>
                         
                       </tr>

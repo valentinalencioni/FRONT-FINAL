@@ -5,6 +5,7 @@ import { ModeloInventario } from "../../enums/ModeloInventario";
 import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
 import DeleteButton from "../DeleteButton/DeleteButton";
+import DemandaModal from "../Modals/DemandaModal";
 
 function DemandaTabla() {
     const [demandas, setDemandas] = useState<Demanda[]>([]);
@@ -107,6 +108,14 @@ function DemandaTabla() {
                 </table>
             </div>
             {/* Agregar Modal */}
+            <DemandaModal
+                title={title}
+                dem={demanda}
+                modalType={modalType}
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                refreshData={setRefreshData}
+            />
 
         </>
     )
