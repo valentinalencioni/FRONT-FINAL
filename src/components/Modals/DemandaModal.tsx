@@ -138,6 +138,16 @@ const DemandaModal = ({
                     {articulos.map(articulo => (
                       <tr key={articulo.id}>
                         <td>
+                          <Form.Check
+                            type="radio"
+                            name="articulo"
+                            value={articulo.id}
+                            checked={articuloSeleccionado?.id === articulo.id}
+                            onChange={() => handleArticuloSelect(articulo)}
+                          />
+                          {articulo.nombre}
+                        </td>
+                        <td>
                           <Form.Control
                             type="date"
                             value={fechaDesde.toISOString().split('T')[0]}
@@ -151,7 +161,7 @@ const DemandaModal = ({
                             onChange={handleFechaHastaChange}
                           />
                         </td>
-    
+
                       </tr>
                     ))}
                   </tbody>
