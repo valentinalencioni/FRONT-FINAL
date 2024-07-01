@@ -28,6 +28,7 @@ const OrdenCompraModal = ({
 }: OrdenCompraModalProps) => {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
+  const [cantidad, setCantidad] = useState<number>(0);
 
   useEffect(() => {
     const fetchArticulos = async () => {
@@ -49,7 +50,7 @@ const OrdenCompraModal = ({
     try {
       const ocDTO = {
         articuloId: articuloSeleccionado?.id || 0,
-        cantidad: 0,
+        cantidad: cantidad,
       };
       await OrdenCompraService.createOrdenCompra(ocDTO);
       onHide();
@@ -64,6 +65,11 @@ const OrdenCompraModal = ({
 
   const handleArticuloSelect = (articulo: Articulo) => {
     setArticuloSeleccionado(articulo);
+    setCantidad(0);
+  };
+
+  const handleCantidadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCantidad(Number(event.target.value));
   };
 
 
@@ -96,8 +102,8 @@ const OrdenCompraModal = ({
                   <thead>
                     <tr>
                       <th>Seleccionar articulo</th>
-                      <th>Cantidad a Pedir</th>
                       <th>Stock Actual</th>
+                      <th>Cantidad a Pedir</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -113,23 +119,22 @@ const OrdenCompraModal = ({
                           />
                           {articulo.nombre}
                         </td>
-                        <td>{articulo.cantidadAPedir}</td>
                         <td>{articulo.stockActual}</td>
                         <td>
-                          
-                          <Form.Control
-                            type="number"
-                            name="stock"
-                            value={articulo.cantidadAPedir}
-                            onChange={() => handleArticuloSelect(articulo)}
-                            min={0}
-                            max={articulo.stockActual}
-                            step={1}
-                            required
-                            disabled
-                            
-                          />
+                        {articuloSeleccionado?.id === articulo.id && (
+                            <Form.Control
+                              type="number"
+                              name="cantidad"
+                              value={cantidad}
+                              onChange={handleCantidadChange}
+                              min={0}
+                              max={articulo.stockActual}
+                              step={1}
+                              required
+                            />
+                          )}
                         </td>
+                        
                       </tr>
                     ))}
                   </tbody>
