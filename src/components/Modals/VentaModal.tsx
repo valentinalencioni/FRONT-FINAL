@@ -44,12 +44,11 @@ const VentaModal = ({
 
     const handleSaveUpdate = async () => {
         try {
-            const DetalleVentaDTO = [
+            const DetalleVentaDTO = 
                 {
                     articulo_id: articuloSeleccionado?.id || 0,
                     cantidad: cantidad,
-                }
-            ];
+                }            ;
             await VentaService.createVenta(DetalleVentaDTO);
             onHide();
             refreshData(prevState => !prevState);

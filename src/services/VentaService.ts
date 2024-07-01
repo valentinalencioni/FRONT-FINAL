@@ -27,7 +27,7 @@ export const VentaService = {
             throw error;
         }
     },
-    createVenta: async (detalleVentaDTO: DetalleVentaDTO[]): Promise <any> =>{
+    createVenta: async (detalleVentaDTO: DetalleVentaDTO): Promise <any> =>{
         const response = await fetch(`${BASE_URL}/api/v1/ventas/nuevaVenta`, {
             method: 'POST',
             headers: {
