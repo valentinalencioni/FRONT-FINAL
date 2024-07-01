@@ -1,6 +1,8 @@
+import OrdenCompraTabla from "../components/Tables/OrdenCompraTabla"
+
 const OrdenDeCompra = () => {
     return (
-      <div>OrdenDeCompra</div>
+      <div><OrdenCompraTabla/></div>
     )
   }
   

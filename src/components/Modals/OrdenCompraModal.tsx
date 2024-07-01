@@ -1,23 +1,149 @@
+
+import { useEffect, useState } from "react";
 import { ModalType } from "../../enums/ModalType";
 import { OrdenCompra } from "../../types/OrdenCompra";
+import { Articulo } from "../../types/Articulo";
+import { ArticuloService } from "../../services/ArticuloService";
+import { OrdenCompraService } from "../../services/OrdenCompraService";
+import { toast } from "react-toastify";
+import { Button, Form, Modal, Table } from "react-bootstrap";
 
-type OrdenCompraModalProps={
+type OrdenCompraModalProps = {
   show: boolean;
-  onHide:() => void;
+  onHide: () => void;
   title: string;
   modalType: ModalType;
   ord: OrdenCompra;
   refreshData: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const OrdenCompraModal =({
+const OrdenCompraModal = ({
   show,
   onHide,
   title,
   modalType,
   ord,
-refreshData,
-}:OrdenCompraModalProps) => {
+  refreshData,
+}: OrdenCompraModalProps) => {
+  const [articulos, setArticulos] = useState<Articulo[]>([]);
+  const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
 
-})
-export default OrdenCompraModal
+  useEffect(() => {
+    const fetchArticulos = async () => {
+      try {
+        const articulos = await ArticuloService.getArticulos();
+        setArticulos(Array.isArray(articulos) ? articulos : []);
+      } catch (error) {
+        console.error("Error fetching articulos: ", error);
+        setArticulos([]);
+      }
+
+    };
+
+    fetchArticulos();
+
+  }, [refreshData]);
+
+  const handleSaveUpdate = async () => {
+    try {
+      const ocDTO = {
+        articuloId: articuloSeleccionado?.id || 0,
+        cantidad: 0,
+      };
+      await OrdenCompraService.createOrdenCompra(ocDTO);
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Orden compra creada exitosamente', { position: 'top-center' });
+    } catch (error) {
+      console.error('Error al crear la orden:', error);
+      toast.error('Error al crear la orden', { position: 'top-center' });
+    }
+  };
+
+
+  const handleArticuloSelect = (articulo: Articulo) => {
+    setArticuloSeleccionado(articulo);
+  };
+
+  return (
+    <>
+      {modalType === ModalType.DETAIL ? (
+        <>
+          <Modal show={show} onHide={onHide} centered backdrop="static">
+            <Modal.Header closeButton>
+              <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            {/* <Modal.Body>
+             <VentaArticuloTabla ventaID={venta.id} />
+            </Modal.Body> */}
+            <Modal.Footer>
+
+            </Modal.Footer>
+
+          </Modal>
+        </>
+      ) : (
+        <div >
+          <Modal show={show} onHide={onHide} centered className="l" style={{ paddingTop: '400px' }}>
+            <Modal.Header closeButton >
+              <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Seleccionar articulo</th>
+                      <th>Cantidad a Pedir</th>
+                      <th>Stock Actual</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {articulos.map(articulo => (
+                      <tr key={articulo.id}>
+                        <td>
+                          <Form.Check
+                            type="radio"
+                            name="articulo"
+                            value={articulo.id}
+                            checked={articuloSeleccionado?.id === articulo.id}
+                            onChange={() => handleArticuloSelect(articulo)}
+                          />
+                        </td>
+                        <td>{articulo.cantidadAPedir}</td>
+                        <td>{articulo.stockActual}</td>
+                        <td>
+                          <Form.Control
+                            type="number"
+                            name="stock"
+                            value={articulo.cantidadAPedir}
+                            onChange={() => handleArticuloSelect(articulo)}
+                            min={0}
+                            max={articulo.stockActual}
+                            step={1}
+                            required
+                            disabled
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={onHide}>
+                Cancelar
+              </Button>
+              <Button variant="success" onClick={handleSaveUpdate}>
+                Guardar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      )}
+    </>
+  );
+
+};
+export default OrdenCompraModal;

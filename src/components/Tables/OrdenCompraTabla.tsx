@@ -4,6 +4,7 @@ import { OrdenCompraService } from "../../services/OrdenCompraService";
 import { EstadoOrdenCompra } from "../../enums/EstadoOrdenCompra";
 import { ModalType } from "../../enums/ModalType";
 import DetalleButton from "../DetalleButton/DetalleButton";
+import OrdenCompraModal from "../Modals/OrdenCompraModal";
 
 function OrdenCompraTabla() {
 
@@ -89,18 +90,19 @@ function OrdenCompraTabla() {
         </table>
       </div>
 
-      {showModal && 
       <OrdenCompraModal 
-      title={title} 
-      ord={ordenCompra} 
-      modalType={modalType} 
-      setShowModal={setShowModal} 
-      setRefreshData={setRefreshData} />}
-
-
+        title={title}
+        ord={ordenCompra}
+        modalType={modalType}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        refreshData={setRefreshData}    
+       />
     </>
-  )
+  );
 
 
 
 }
+
+export default OrdenCompraTabla;
