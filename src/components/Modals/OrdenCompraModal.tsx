@@ -8,6 +8,7 @@ import { OrdenCompraService } from "../../services/OrdenCompraService";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 
+
 type OrdenCompraModalProps = {
   show: boolean;
   onHide: () => void;
@@ -65,6 +66,7 @@ const OrdenCompraModal = ({
     setArticuloSeleccionado(articulo);
   };
 
+
   return (
     <>
       {modalType === ModalType.DETAIL ? (
@@ -109,10 +111,12 @@ const OrdenCompraModal = ({
                             checked={articuloSeleccionado?.id === articulo.id}
                             onChange={() => handleArticuloSelect(articulo)}
                           />
+                          {articulo.nombre}
                         </td>
                         <td>{articulo.cantidadAPedir}</td>
                         <td>{articulo.stockActual}</td>
                         <td>
+                          
                           <Form.Control
                             type="number"
                             name="stock"
@@ -123,6 +127,7 @@ const OrdenCompraModal = ({
                             step={1}
                             required
                             disabled
+                            
                           />
                         </td>
                       </tr>

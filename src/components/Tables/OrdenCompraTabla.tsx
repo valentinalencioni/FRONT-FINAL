@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { OrdenCompra } from "../../types/OrdenCompra";
 import { OrdenCompraService } from "../../services/OrdenCompraService";
 import { EstadoOrdenCompra } from "../../enums/EstadoOrdenCompra";
@@ -10,6 +10,7 @@ function OrdenCompraTabla() {
 
   const [ordenesCompra, setOrdenesCompra] = useState<OrdenCompra[]>([]);
   const [refreshData, setRefreshData] = useState(false);
+  
 
   useEffect(() => {
     const fetchOrdenesCompra = async () => {
@@ -38,6 +39,7 @@ function OrdenCompraTabla() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
   const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
+  const [search, setSearch] = useState ("");
 
   const handleClick = (title: string, ord: OrdenCompra, modal: ModalType) => {
     setOrdenCompra(ord);
@@ -47,9 +49,27 @@ function OrdenCompraTabla() {
   };
   //Otro manejo de funciones como filtrar por estados o confirmar ordenes.
 
+  //Metodo de filtrado 
+  let results: any[] = []
+  if(!search){
+    results = ordenesCompra
+  }else{
+    results = ordenesCompra.filter( (dato: { estadoOrdenCompra: string; }) => 
+      dato.estadoOrdenCompra.toLowerCase().includes(search.toLowerCase())
+  )
+  }
+
+  //funcion de busqueda 
+  const searcher =  (e: { target: { value: SetStateAction<string>; }; }) => {
+    setSearch(e.target.value)
+    console.log(e.target.value);
+  }
   return (
     <>
-      <div className="flex justify-start space-x-2 p-4">
+    <div className="p-4">
+      <input value={search} onChange={searcher} type="text" placeholder="Buscar Ordenes por Estado" className="form-control"/>
+    </div>
+      <div className="flex justify-start space-x-2 ">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
           onClick={() => handleClick("Nueva orden compra", initializableNewOrden(), ModalType.CREATE)}
@@ -58,7 +78,7 @@ function OrdenCompraTabla() {
         </button>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300">
+        <table className="table table-striped table-hover mt-2 shadow-sm">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b bg-dark-subtle">ID</th>
@@ -70,8 +90,8 @@ function OrdenCompraTabla() {
               <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
             </tr>
           </thead>
-          <tbody>
-            {ordenesCompra.map(ordenCompra => (
+          <tbody className="table-group-divider">
+            {results.map(ordenCompra => (
               <tr>
                 <td className="py-2 px-4 border-b">{ordenCompra.id}</td>
                 <td className="py-2 px-4 border-b"> {new Date(ordenCompra.fechaOrdenCompra).toLocaleString()}</td>
