@@ -2,7 +2,7 @@ import OrdenCompraTabla from "../components/Tables/OrdenCompraTabla"
 
 const OrdenDeCompra = () => {
     return (
-      <div><OrdenCompraTabla/></div>
+      <div style={{padding: "20px"}}><OrdenCompraTabla/></div>
     )
   }
   

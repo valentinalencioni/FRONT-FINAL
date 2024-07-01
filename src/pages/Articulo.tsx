@@ -2,7 +2,7 @@ import ArticuloTabla from "../components/Tables/ArticuloTabla"
 
 const Articulo = () => {
   return (
-    <div>
+    <div style={{padding: "20px"}}>
         <ArticuloTabla/>
     </div>
 );

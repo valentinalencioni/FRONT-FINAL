@@ -2,7 +2,7 @@ import ArticulosAReponerTabla from "../components/Tables/ArticulosAReponerTabla"
 
 const ArticulosAReponer=() => {
     return(
-        <div>
+        <div style={{padding: "20px"}}>
             <ArticulosAReponerTabla/>
         </div>
     )

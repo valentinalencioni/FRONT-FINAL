@@ -2,7 +2,7 @@ import ArticulosFaltantesTabla from "../components/Tables/ArticulosFaltantesTabl
 
 const ArticulosFaltantes=() => {
     return(
-        <div>
+        <div style={{padding: "20px"}}>
             <ArticulosFaltantesTabla/>
         </div>
     )

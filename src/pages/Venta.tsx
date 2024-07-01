@@ -2,7 +2,7 @@ import VentaTabla from "../components/Tables/VentaTabla"
 
 const Venta = () => {
   return (
-    <div>
+    <div style={{padding: "20px"}}>
         <VentaTabla/>
     </div>
 );

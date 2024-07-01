@@ -1,7 +1,7 @@
 
 const Demanda = () => {
   return (
-    <div>Demanda</div>
+    <div style={{padding: "20px"}}>Demanda</div>
   )
 }
 

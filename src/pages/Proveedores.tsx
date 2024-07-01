@@ -2,7 +2,7 @@
 
 function Proveedores() {
   return (
-    <div>Proveedores</div>
+    <div style={{padding: "20px"}}>Proveedores</div>
   )
 }
 

@@ -1,6 +1,6 @@
 const Prediccion = () => {
     return (
-      <div>Prediccion</div>
+      <div style={{padding: "20px"}}>Prediccion</div>
     )
   }
   
