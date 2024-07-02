@@ -8,7 +8,7 @@ import OrdenDeCompra from "../pages/OrdenDeCompra"
 import Prediccion from "../pages/Prediccion"
 import ArticulosAReponer from "../pages/Articulosareponer"
 import ArticulosFaltantes from "../pages/Articulosfaltantes"
-import DetallesOC from "../pages/DetallesOC"
+
 import Proveedores from "../pages/Proveedores"
 
 const AppRoutes: React.FC = () => {
@@ -24,7 +24,6 @@ const AppRoutes: React.FC = () => {
             <Route path="/orden-de-compra" element={<OrdenDeCompra />} />
             <Route path="/articulos-a-reponer" element={<ArticulosAReponer />} />
             <Route path="/articulos-faltantes" element={<ArticulosFaltantes />} />
-            <Route path="/detallesOC/:id" element={<DetallesOC />} />
         </Routes>
     )
 }

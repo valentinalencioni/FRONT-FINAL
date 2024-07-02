@@ -8,6 +8,9 @@ import { OrdenCompraService } from "../../services/OrdenCompraService";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import DetallesOCTabla from "../Tables/DetallesOCTabla";
+import { DetalleOrdenCompra } from "../../types/DetalleOrdenCompra";
+import { useNavigate } from "react-router-dom";
+import { DetalleOCService } from "../../services/DetalleOCService";
 
 
 type OrdenCompraModalProps = {
@@ -28,9 +31,9 @@ const OrdenCompraModal = ({
   refreshData,
 }: OrdenCompraModalProps) => {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
-  const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
+  const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null);
   const [cantidad, setCantidad] = useState<number>(0);
-  const [OCSeleccionada, setOCSeleccionada]= useState<OrdenCompra | null>(null);
+  const [detallesOC, setDetallesOC] = useState<DetalleOrdenCompra[]>([]);
 
   useEffect(() => {
     const fetchArticulos = async () => {
@@ -41,12 +44,25 @@ const OrdenCompraModal = ({
         console.error("Error fetching articulos: ", error);
         setArticulos([]);
       }
+    };
 
+    const fetchDetallesOC = async () => {
+      if (modalType === ModalType.DETAIL && ord.id) {
+        try {
+          const detalles = await DetalleOCService.getDetallesOC(ord.id);
+          setDetallesOC(detalles);
+        } catch (error) {
+          console.error("Error fetching detalles de orden de compra: ", error);
+          setDetallesOC([]);
+        }
+      }
     };
 
     fetchArticulos();
+    fetchDetallesOC();
+  }, [refreshData, modalType, ord.id]);
 
-  }, [refreshData]);
+
 
   const handleSaveUpdate = async () => {
     try {
@@ -64,7 +80,7 @@ const OrdenCompraModal = ({
     }
   };
 
-  const handleDelete = async ()=>{
+  const handleDelete = async () => {
     try {
       await OrdenCompraService.deleteOrdenCompra(ord.id);
       onHide();
@@ -113,7 +129,28 @@ const OrdenCompraModal = ({
             <Modal.Title>{title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <DetallesOCTabla ordenCompraid={ord.id} />
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Articulo</th>
+                  <th>Stock Actual</th>
+                  <th>Cantidad a Pedir</th>
+                  <th>SubTotal</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {detallesOC.map(detallesOC => (
+                  <tr key={detallesOC.id}>
+                    <td>{detallesOC.articulo?.nombre}</td>
+                    <td>{detallesOC.articulo?.stockActual}</td>
+                    <td>{detallesOC.cantidadOCD}</td>
+                    <td>{detallesOC.subtotal.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>
