@@ -38,7 +38,7 @@ const VentaModal = ({
             }
         };
         fetchArticulos();
-    }, []);
+    }, [refreshData]);
 
     const handleSaveUpdate = async () => {
         try {
@@ -46,7 +46,6 @@ const VentaModal = ({
                 articulo_id: item.articulo.id,
                 cantidad: item.cantidad,
             }));
-
             await VentaService.createVenta(detalleVentaDTOList);
             onHide();
             refreshData(prevState => !prevState);
@@ -72,26 +71,27 @@ const VentaModal = ({
     const handleArticuloSelect = (articulo: Articulo, cantidad: number) => {
         setArticulosSeleccionados(prevState => {
             const index = prevState.findIndex(item => item.articulo.id === articulo.id);
-            if (index >= 0) {
-                const newState = [...prevState];
-                if (cantidad > 0) {
-                    newState[index].cantidad = cantidad;
-                } else {
-                    newState.splice(index, 1);
-                }
-                return newState;
-            } else if (cantidad > 0) {
+            if (index !== -1) {
+                const updated = [...prevState];
+                updated[index].cantidad = cantidad;
+                return updated;
+            } else {
                 return [...prevState, { articulo, cantidad }];
             }
-            return prevState;
         });
     };
 
-    const handleCantidadChange = (articulo: Articulo, event: React.ChangeEvent<HTMLInputElement>) => {
-        const newCantidad = Number(event.target.value);
-        if (newCantidad <= articulo.stockActual) {
-            handleArticuloSelect(articulo, newCantidad);
-        }
+    const handleCantidadChange = (articulo: Articulo, cantidad: number) => {
+        setArticulosSeleccionados(prevState => {
+            const index = prevState.findIndex(item => item.articulo.id === articulo.id);
+            if (index !== -1) {
+                const updated = [...prevState];
+                updated[index].cantidad = cantidad;
+                return updated;
+            } else {
+                return [...prevState, { articulo, cantidad }];
+            }
+        });
     };
 
     return (
@@ -117,7 +117,7 @@ const VentaModal = ({
                 </>
             ) : (
                 <div>
-                    <Modal show={show} onHide={onHide} centered className="l" style={{ paddingTop: '400px' }}>
+                    <Modal show={show} onHide={onHide} centered style={{ paddingTop: '400px' }}>
                         <Modal.Header closeButton>
                             <Modal.Title>{title}</Modal.Title>
                         </Modal.Header>
@@ -140,20 +140,20 @@ const VentaModal = ({
                                                         type="checkbox"
                                                         name="articulo"
                                                         value={articulo.id}
-                                                        checked={!!articulosSeleccionados.find(item => item.articulo.id === articulo.id)}
-                                                        onChange={(e) => handleArticuloSelect(articulo, e.target.checked ? 1 : 0)}
+                                                        checked={articulosSeleccionados.some(item => item.articulo.id === articulo.id)}
+                                                        onChange={e => handleArticuloSelect(articulo, e.target.checked ? 0 : -1)}
                                                     />
                                                     {articulo.nombre}
                                                 </td>
                                                 <td>{articulo.stockActual}</td>
                                                 <td>{articulo.precio}</td>
                                                 <td>
-                                                    {articulosSeleccionados.find(item => item.articulo.id === articulo.id) && (
+                                                    {articulosSeleccionados.some(item => item.articulo.id === articulo.id) && (
                                                         <Form.Control
                                                             type="number"
                                                             name="cantidad"
                                                             value={articulosSeleccionados.find(item => item.articulo.id === articulo.id)?.cantidad || 0}
-                                                            onChange={(e) => handleCantidadChange(articulo, e)}
+                                                            onChange={e => handleCantidadChange(articulo, Number(e.target.value))}
                                                             min={0}
                                                             max={articulo.stockActual}
                                                             step={1}
