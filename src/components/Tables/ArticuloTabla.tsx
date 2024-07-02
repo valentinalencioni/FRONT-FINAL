@@ -40,7 +40,7 @@ function ArticuloTable() {
     useEffect(() => {
         const fetchProveedores = async () => {
             try {
-                const proveedores = await ProveedorArticuloService.getProvArt(articulo.id);
+                const proveedores = await ProveedorArticuloService.getProveedoresArt();
                 setProveedores(Array.isArray(proveedores) ? proveedores : []);
             } catch (error) {
                 console.error("Error obteniendo los ProveedorArticulo: ", error);

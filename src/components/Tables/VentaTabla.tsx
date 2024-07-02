@@ -100,7 +100,7 @@ function VentaTabla() {
                     
               
             </div>
-            <div className="flex justify-end space-x-2 p-4">
+            <div className="flex justify-start space-x-2 ">
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
                     onClick={() => handleClick("Nueva Venta", initializableNewVenta(), ModalType.CREATE)}

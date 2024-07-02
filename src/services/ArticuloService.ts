@@ -1,4 +1,7 @@
 import { Articulo } from "../types/Articulo";
+import { FaltanteDTO } from "../types/FaltanteDTO";
+import { ReponerDTO } from "../types/ReponerDTO";
+
 
 const BASE_URL ='http://localhost:8082'; 
 
@@ -69,18 +72,19 @@ export const ArticuloService = {
         return data;
     },
     
-    getArticulosAReponer: async() : Promise <Articulo []> =>{
+    getArticulosAReponer: async() : Promise <ReponerDTO []> =>{
         const response = await fetch (`${BASE_URL}/api/v1/articulos/reponer`);
         const data= await response.json();
         return data;
 
     },
 
-    getArticulosFaltantes: async() : Promise <Articulo []> =>{
+    getArticulosFaltantes: async() : Promise <FaltanteDTO []> =>{
         const response = await fetch (`${BASE_URL}/api/v1/articulos/faltantes`);
         const data= await response.json();
         return data;
 
     },
+
 
 }

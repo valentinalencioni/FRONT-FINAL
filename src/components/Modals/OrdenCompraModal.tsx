@@ -29,6 +29,7 @@ const OrdenCompraModal = ({
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null); //Articulo []
   const [cantidad, setCantidad] = useState<number>(0);
+  const [OCSeleccionada, setOCSeleccionada]= useState<OrdenCompra | null>(null);
 
   useEffect(() => {
     const fetchArticulos = async () => {

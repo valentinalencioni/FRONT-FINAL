@@ -57,7 +57,7 @@ const ArticuloModal = ({
 
     const fetchProvArt = async () => {
       try {
-        const response = await ProveedorArticuloService.getProvArt(articulo.id);
+        const response = await ProveedorArticuloService.getProveedoresArt();
         setProvArt(response);
       } catch (error) {
         console.error(error);
@@ -307,7 +307,7 @@ const ArticuloModal = ({
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
-                      {formik.errors.proveedorPred}
+                      {formik.errors.proveedorPred?.id}
                     </Form.Control.Feedback>
                   </Form.Group>
                 )}

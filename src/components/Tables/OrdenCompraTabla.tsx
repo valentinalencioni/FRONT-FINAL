@@ -7,12 +7,12 @@ import DetalleButton from "../DetalleButton/DetalleButton";
 import OrdenCompraModal from "../Modals/OrdenCompraModal";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import EditButton from "../EditButton/EditButton";
+import { useNavigate } from "react-router-dom";
 
 function OrdenCompraTabla() {
 
   const [ordenesCompra, setOrdenesCompra] = useState<OrdenCompra[]>([]);
   const [refreshData, setRefreshData] = useState(false);
-  
 
   useEffect(() => {
     const fetchOrdenesCompra = async () => {
@@ -42,6 +42,9 @@ function OrdenCompraTabla() {
   const [title, setTitle] = useState("");
   const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
   const [search, setSearch] = useState ("");
+  
+
+
 
   const handleClick = (title: string, ord: OrdenCompra, modal: ModalType) => {
     setOrdenCompra(ord);
@@ -66,6 +69,8 @@ function OrdenCompraTabla() {
     setSearch(e.target.value)
     console.log(e.target.value);
   }
+
+  const navigate = useNavigate();
   return (
     <>
     <div className="p-4">
@@ -104,7 +109,7 @@ function OrdenCompraTabla() {
                 <td className="py-2 px-4 border-b">{ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : 'Sin Proveedor'}</td>
                 <td className="py-2 px-4 border-b text-center">
                   <div className="d-flex justify-content-center">
-                    {<DetalleButton onClick={() => handleClick("Ver detalles", ordenCompra, ModalType.DETAIL)} />}
+                    {<DetalleButton onClick={() => navigate('/detallesOC')} />}
                   </div>
                 </td>
                 <td className="py-2 px-4 border-b text-center">

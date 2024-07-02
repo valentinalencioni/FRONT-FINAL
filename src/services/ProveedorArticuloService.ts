@@ -1,35 +1,32 @@
 import { Articulo } from "../types/Articulo";
+import { crearPADTO } from "../types/CrearPADTO";
 import { ProveedorArticulo } from "../types/ProveedorArticulo";
 
 const BASE_URL ='http://localhost:8082';
 
 export const ProveedorArticuloService={
-    createProvArt: async (articulo: Articulo): Promise<ProveedorArticulo> => {
-        const response = await fetch(`${BASE_URL}/api/v1/proveedorarticulo`, {
-            method: "POST",
-            headers: {
-                'Accept': '*/*',
-                'Authorization': `Bearer ` + localStorage.getItem('token'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(articulo)
-        });
-        const data= await response.json();
+    
+
+    getProveedoresArt: async (): Promise<ProveedorArticulo[]> =>{
+        const response = await fetch(`${BASE_URL}/api/v1/proveedorarticulo`);
+        const data = await response.json();
         return data;
     },
 
-    getProvArt: async (id: number): Promise <ProveedorArticulo[]>=>{
-        const response= await fetch(`${BASE_URL}/api/v1/proveedorarticulo/findProveedoresByArticulo/${id}`,{
-            method: "GET", 
-            headers:{
-                'Accept': '*/*',
-                'Authorization': `Bearer ` + localStorage.getItem('token'),
-                'Content-Type': 'application/json'
-            }
+    createProveedorArt: async (provart: crearPADTO): Promise <any> =>{
+        const response = await fetch(`${BASE_URL}/api/v1/proveedorarticulo/crear`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(provart),
         });
-        const data=await response.json();
-        return data;
-    },
+        if (!response.ok) {
+            throw new Error('Error al crear Proveedor Articulo');
+        }
+
+        return await response.json();
+    }
     
 
 

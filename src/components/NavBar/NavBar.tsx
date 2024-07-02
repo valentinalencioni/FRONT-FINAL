@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
                 <li><Link className="text-white font-bold hover:underline" to="/venta">Ventas</Link></li>
                 <li><Link className="text-white font-bold hover:underline" to="/demanda">Demanda</Link></li>
                 <li><Link className="text-white font-bold hover:underline" to="/prediccion">Prediccion</Link></li>
-                <li><Link className="text-white font-bold hover:underline" to="/proveedores">Proveedores</Link></li>
+                <li><Link className="text-white font-bold hover:underline" to="/proveedor-articulo">Proveedores</Link></li>
                 <li><Link className="text-white font-bold hover:underline" to="/orden-de-compra">Orden de Compra</Link></li>
             </ul>
         </nav>
