@@ -10,33 +10,33 @@ import Articulo from "../../pages/Articulo";
 
 
 function ProveedorArticuloTabla() {
-    const [proveedoresArt,setProveedoresArt]= useState<ProveedorArticulo[]>([]);
-    const [refreshData, setRefreshData]= useState(false);
+    const [proveedoresArt, setProveedoresArt] = useState<ProveedorArticulo[]>([]);
+    const [refreshData, setRefreshData] = useState(false);
 
 
-  useEffect(()=>{
-    const fetchProveedoresArticulos = async () => {
-        try{
-            const proveedoresArt = await ProveedorArticuloService.getProveedoresArt();
-            setProveedoresArt(Array.isArray(proveedoresArt) ? proveedoresArt : []);
+    useEffect(() => {
+        const fetchProveedoresArticulos = async () => {
+            try {
+                const proveedoresArt = await ProveedorArticuloService.getProveedoresArt();
+                setProveedoresArt(Array.isArray(proveedoresArt) ? proveedoresArt : []);
 
-        }catch (error) {
-            console.error("Error fetching proveedores articulos:", error);
-        }
-    };
-    fetchProveedoresArticulos();
+            } catch (error) {
+                console.error("Error fetching proveedores articulos:", error);
+            }
+        };
+        fetchProveedoresArticulos();
 
-}, [refreshData]);
+    }, [refreshData]);
 
-console.log(JSON.stringify(proveedoresArt, null, 2));
+    console.log(JSON.stringify(proveedoresArt, null, 2));
 
-const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
-    id:0,
-    tiempoDemora: 0,
-    costoAlmacenamiento: 0,
-    costoPedido: 0,
-    precioArticuloProveedor: 0,
-    articulo: {
+    const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
+        id: 0,
+        tiempoDemora: 0,
+        costoAlmacenamiento: 0,
+        costoPedido: 0,
+        precioArticuloProveedor: 0,
+        articulo: {
             id: 0,
             nombre: "",
             precio: 0,
@@ -57,18 +57,18 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
                 nombreProveedor: "",
             },
             metodoPred: MetodoPrediccion.ESTACIONALIDAD,
-    },
-    proveedor: {
-            id: 0 ,
+        },
+        proveedor: {
+            id: 0,
             nombreProveedor: '',
-    },
-});
+        },
+    });
 
     const [proveedorArt, setProveedorArt] = useState<ProveedorArticulo>(initializableNewProveedorArticulo);
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState("");
     const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
-    const [search, setSearch] = useState ("");
+    const [search, setSearch] = useState("");
 
     const handleClick = (title: string, prova: ProveedorArticulo, modal: ModalType) => {
         setProveedorArt(prova);
@@ -76,44 +76,44 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
         setShowModal(true);
         setModalType(modal);
     };
-    
-      //funcion de busqueda 
-  const searcher =  (e: { target: { value: SetStateAction<string>; }; }) => {
-    setSearch(e.target.value)
-    console.log(e.target.value);
-  }
+
+    //funcion de busqueda 
+    const searcher = (e: { target: { value: SetStateAction<string>; }; }) => {
+        setSearch(e.target.value)
+        console.log(e.target.value);
+    }
     //Metodo de filtrado por nombre de articulo 
     const results = !search
-    ? proveedoresArt
-    : proveedoresArt.filter((dato) =>
-        dato.articulo.nombre.toLowerCase().includes(search.toLowerCase())
-    );
+        ? proveedoresArt
+        : proveedoresArt.filter((dato) =>
+            dato.articulo.nombre.toLowerCase().includes(search.toLowerCase())
+        );
 
     const navigate = useNavigate();
     return (
         <>
             <div className="flex justify-start space-x-2 ">
+
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={() => handleClick("Nuevo Proveedor articulo", initializableNewProveedorArticulo(), ModalType.CREATE)}
+                >
+                    Nuevo Proveedor articulo
+                </button>
+                <button
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={() => navigate('/proveedores')}
+                >
+                    Ver todos los proveedores
+                </button>
                 
-            <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={() => handleClick("Nuevo Proveedor articulo", initializableNewProveedorArticulo(), ModalType.CREATE)}
-            >
-                Nuevo Proveedor articulo
-            </button>
-            <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={() => navigate('/proveedores')}
-            >
-                Ver todos los proveedores
-            </button>
-            <div className="p-4">
-            <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control"/>
             </div>
 
-               
-            </div>
+                <div className="p-4">
+                    <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control" />
+                </div>
             <div className="overflow-x-auto">
-            <table className="table table-striped table-hover mt-2 shadow-sm">
+                <table className="table table-striped table-hover mt-2 shadow-sm">
                     <thead>
                         <tr>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Articulo</th>
@@ -129,20 +129,20 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
                             <tr>
                                 <td>{proveedorArt.articulo ? proveedorArt.articulo.nombre : 'Sin Articulo'}</td>
                                 <td>{proveedorArt.proveedor ? proveedorArt.proveedor.nombreProveedor : 'Sin Proveedor'}</td>
-                                <td className="py-2 px-4 border-b">{proveedorArt.precioArticuloProveedor}</td> 
+                                <td className="py-2 px-4 border-b">{proveedorArt.precioArticuloProveedor}</td>
                                 <td className="py-2 px-4 border-b">{proveedorArt.costoAlmacenamiento}</td>
                                 <td className="py-2 px-4 border-b">{proveedorArt.costoPedido}
-                                </td> 
-                                <td className="py-2 px-4 border-b">{proveedorArt.tiempoDemora}</td> 
+                                </td>
+                                <td className="py-2 px-4 border-b">{proveedorArt.tiempoDemora}</td>
                             </tr>
                         ))}
                     </tbody>
-                    </table>
+                </table>
             </div>
-        
+
         </>
-      )
-     } 
+    )
+}
 
 export default ProveedorArticuloTabla;
 

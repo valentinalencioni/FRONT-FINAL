@@ -41,8 +41,8 @@ function OrdenCompraTabla() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
   const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
-  const [search, setSearch] = useState ("");
-  
+  const [search, setSearch] = useState("");
+
 
 
 
@@ -56,16 +56,16 @@ function OrdenCompraTabla() {
 
   //Metodo de filtrado 
   let results: any[] = []
-  if(!search){
+  if (!search) {
     results = ordenesCompra
-  }else{
-    results = ordenesCompra.filter( (dato: { estadoOrdenCompra: string; }) => 
+  } else {
+    results = ordenesCompra.filter((dato: { estadoOrdenCompra: string; }) =>
       dato.estadoOrdenCompra.toLowerCase().includes(search.toLowerCase())
-  )
+    )
   }
 
   //funcion de busqueda 
-  const searcher =  (e: { target: { value: SetStateAction<string>; }; }) => {
+  const searcher = (e: { target: { value: SetStateAction<string>; }; }) => {
     setSearch(e.target.value)
     console.log(e.target.value);
   }
@@ -73,9 +73,9 @@ function OrdenCompraTabla() {
   const navigate = useNavigate();
   return (
     <>
-    <div className="p-4">
-      <input value={search} onChange={searcher} type="text" placeholder="Buscar Ordenes por Estado" className="form-control"/>
-    </div>
+      <div className="p-4">
+        <input value={search} onChange={searcher} type="text" placeholder="Buscar Ordenes por Estado" className="form-control" />
+      </div>
       <div className="flex justify-start space-x-2 ">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
@@ -129,14 +129,14 @@ function OrdenCompraTabla() {
         </table>
       </div>
 
-      <OrdenCompraModal 
+      <OrdenCompraModal
         title={title}
         ord={ordenCompra}
         modalType={modalType}
         show={showModal}
         onHide={() => setShowModal(false)}
-        refreshData={setRefreshData}    
-       />
+        refreshData={setRefreshData}
+      />
     </>
   );
 
