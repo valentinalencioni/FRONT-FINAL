@@ -6,6 +6,8 @@ import { VentaService } from "../../services/VentaService";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { ArticuloService } from "../../services/ArticuloService";
+import { VentaDetalle } from "../../types/VentaDetalle";
+import { VentaDetalleService } from "../../services/VentaDetalleService";
 
 type VentaModalProps = {
     show: boolean;
@@ -26,6 +28,7 @@ const VentaModal = ({
 }: VentaModalProps) => {
     const [articulos, setArticulos] = useState<Articulo[]>([]);
     const [articulosSeleccionados, setArticulosSeleccionados] = useState<{ articulo: Articulo, cantidad: number }[]>([]);
+    const [ventaDetalles, setVentaDetalles] = useState<VentaDetalle[]>([]);
 
     useEffect(() => {
         const fetchArticulos = async () => {
@@ -37,9 +40,23 @@ const VentaModal = ({
                 setArticulos([]);
             }
         };
-        fetchArticulos();
-    }, [refreshData]);
+       
+   
 
+    const fetchVentaDetalle = async () => { 
+        if (modalType === ModalType.DETAIL && venta.id){
+            try {
+                const detalles = await VentaDetalleService.getVentaDetalle(venta.id);
+                setVentaDetalles(detalles);
+            } catch (error) {
+                console.error("Error fetching detalles de venta: ", error);
+                setVentaDetalles([]);
+            }
+        }
+    };
+    fetchArticulos();
+    fetchVentaDetalle();
+}, [refreshData, modalType, venta.id]);
     const handleSaveUpdate = async () => {
         try {
             const detalleVentaDTOList = articulosSeleccionados.map(item => ({
@@ -93,7 +110,7 @@ const VentaModal = ({
             }
         });
     };
-
+    
     return (
         <>
             {modalType === ModalType.DELETE ? (
@@ -115,7 +132,43 @@ const VentaModal = ({
                         </Modal.Footer>
                     </Modal>
                 </>
-            ) : (
+            ) : modalType === ModalType.DETAIL ? (
+                <Modal show={show} onHide={onHide} centered backdrop="static">
+                  <Modal.Header closeButton>
+                    <Modal.Title>{title}</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>Articulo</th>
+                          <th>Cantidad</th>
+                          <th>SubTotal</th>
+                          <th>Fecha Venta</th>
+        
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ventaDetalles.map(ventaDetalles => (
+                          <tr key={ventaDetalles.id}>
+                            <td>{ventaDetalles.articulo?.nombre}</td>
+                            <td>{ventaDetalles.cantidadVenta}</td>
+                            <td>{ventaDetalles.subtotal}</td>
+                            <td>{new Date(ventaDetalles.idVenta?.fechaVenta).toLocaleDateString()}</td>
+
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+        
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={onHide}>
+                      Cerrar
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              ) : (
                 <div>
                     <Modal show={show} onHide={onHide} centered style={{ paddingTop: '400px' }}>
                         <Modal.Header closeButton>
