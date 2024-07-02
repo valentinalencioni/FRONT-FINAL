@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
 import { ModeloInventario } from "../../enums/ModeloInventario";
@@ -77,6 +77,11 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
         setModalType(modal);
     };
     
+      //funcion de busqueda 
+  const searcher =  (e: { target: { value: SetStateAction<string>; }; }) => {
+    setSearch(e.target.value)
+    console.log(e.target.value);
+  }
     //Metodo de filtrado por nombre de articulo 
     const results = !search
     ? proveedoresArt
@@ -102,7 +107,7 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
                 Ver todos los proveedores
             </button>
             <div className="p-4">
-            <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Buscar por nombre de Articulo" className="form-control"/>
+            <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control"/>
             </div>
 
                
@@ -122,7 +127,6 @@ const initializableNewProveedorArticulo = (): ProveedorArticulo => ({
                     <tbody className="table-group-divider">
                         {results.map(proveedorArt => (
                             <tr>
-                               
                                 <td>{proveedorArt.articulo ? proveedorArt.articulo.nombre : 'Sin Articulo'}</td>
                                 <td>{proveedorArt.proveedor ? proveedorArt.proveedor.nombreProveedor : 'Sin Proveedor'}</td>
                                 <td className="py-2 px-4 border-b">{proveedorArt.precioArticuloProveedor}</td> 
