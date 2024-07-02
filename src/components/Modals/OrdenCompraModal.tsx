@@ -7,6 +7,7 @@ import { ArticuloService } from "../../services/ArticuloService";
 import { OrdenCompraService } from "../../services/OrdenCompraService";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Table } from "react-bootstrap";
+import DetallesOCTabla from "../Tables/DetallesOCTabla";
 
 
 type OrdenCompraModalProps = {
@@ -89,87 +90,95 @@ const OrdenCompraModal = ({
 
   return (
     <>
-      {modalType === ModalType.DELETE ? ( 
-        <>
-          <Modal show={show} onHide={onHide} centered backdrop="static">
-            <Modal.Header closeButton>
-              <Modal.Title>{title}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <p>¿Seguro que desea eliminar esta orden de compra?</p>
-            </Modal.Body> 
-            <Modal.Footer>
-              <Button variant="secondary" onClick={onHide}>
-                Cancelar
-              </Button>
-              <Button variant="danger" onClick={handleDelete}>
-                Eliminar
-              </Button>
-            </Modal.Footer>
-
-          </Modal>
-        </>
+      {modalType === ModalType.DELETE ? (
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>¿Seguro que desea eliminar esta orden de compra?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleDelete}>
+              Eliminar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : modalType === ModalType.DETAIL ? (
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <DetallesOCTabla ordenCompraid={ord.id} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
       ) : (
-        <div >
-          <Modal show={show} onHide={onHide} centered className="l" style={{ paddingTop: '400px' }}>
-            <Modal.Header closeButton >
-              <Modal.Title>{title}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Seleccionar articulo</th>
-                      <th>Stock Actual</th>
-                      <th>Cantidad a Pedir</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {articulos.map(articulo => (
-                      <tr key={articulo.id}>
-                        <td>
-                          <Form.Check
-                            type="radio"
-                            name="articulo"
-                            value={articulo.id}
-                            checked={articuloSeleccionado?.id === articulo.id}
-                            onChange={() => handleArticuloSelect(articulo)}
-                          />
-                          {articulo.nombre}
-                        </td>
-                        <td>{articulo.stockActual}</td>
-                        <td>
+        <Modal show={show} onHide={onHide} centered className="l" style={{ paddingTop: '400px' }}>
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Seleccionar articulo</th>
+                    <th>Stock Actual</th>
+                    <th>Cantidad a Pedir</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {articulos.map(articulo => (
+                    <tr key={articulo.id}>
+                      <td>
+                        <Form.Check
+                          type="radio"
+                          name="articulo"
+                          value={articulo.id}
+                          checked={articuloSeleccionado?.id === articulo.id}
+                          onChange={() => handleArticuloSelect(articulo)}
+                        />
+                        {articulo.nombre}
+                      </td>
+                      <td>{articulo.stockActual}</td>
+                      <td>
                         {articuloSeleccionado?.id === articulo.id && (
-                            <Form.Control
-                              type="number"
-                              name="cantidad"
-                              value={cantidad}
-                              onChange={handleCantidadChange}
-                              min={0}
-                              max={articulo.stockActual}
-                              step={1}
-                              required
-                            />
-                          )}
-                        </td>
-                        
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={onHide}>
-                Cancelar
-              </Button>
-              <Button variant="success" onClick={handleSaveUpdate}>
-                Guardar
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </div>
+                          <Form.Control
+                            type="number"
+                            name="cantidad"
+                            value={cantidad}
+                            onChange={handleCantidadChange}
+                            min={0}
+                            max={articulo.stockActual}
+                            step={1}
+                            required
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleSaveUpdate}>
+              Guardar
+            </Button>
+          </Modal.Footer>
+        </Modal>
       )}
     </>
   );

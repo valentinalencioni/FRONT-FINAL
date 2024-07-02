@@ -9,6 +9,7 @@ import Prediccion from "../pages/Prediccion"
 import ArticulosAReponer from "../pages/Articulosareponer"
 import ArticulosFaltantes from "../pages/Articulosfaltantes"
 import DetallesOC from "../pages/DetallesOC"
+import Proveedores from "../pages/Proveedores"
 
 const AppRoutes: React.FC = () => {
     return (
@@ -19,10 +20,11 @@ const AppRoutes: React.FC = () => {
             <Route path="/demanda" element={<Demanda />} />
             <Route path="/prediccion" element={<Prediccion />} />
             <Route path="/proveedor-articulo" element={<ProveedorArticulo />} />
+            <Route path="/proveedores" element={<Proveedores />} />
             <Route path="/orden-de-compra" element={<OrdenDeCompra />} />
             <Route path="/articulos-a-reponer" element={<ArticulosAReponer />} />
             <Route path="/articulos-faltantes" element={<ArticulosFaltantes />} />
-            <Route path="/detallesOC" element={<DetallesOC />} />
+            <Route path="/detallesOC/:id" element={<DetallesOC />} />
         </Routes>
     )
 }

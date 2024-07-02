@@ -6,6 +6,7 @@ import { ProveedorArticuloService } from "../../services/ProveedorArticuloServic
 import { ProveedorArticulo } from "../../types/ProveedorArticulo";
 import { useNavigate } from "react-router-dom";
 import Articulo from "../../pages/Articulo";
+import ProveedorArticuloModal from "../Modals/ProveedorArticuloModal";
 
 
 
@@ -106,12 +107,12 @@ function ProveedorArticuloTabla() {
                 >
                     Ver todos los proveedores
                 </button>
-                
+
             </div>
 
-                <div className="p-4">
-                    <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control" />
-                </div>
+            <div className="p-4">
+                <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control" />
+            </div>
             <div className="overflow-x-auto">
                 <table className="table table-striped table-hover mt-2 shadow-sm">
                     <thead>
@@ -139,6 +140,15 @@ function ProveedorArticuloTabla() {
                     </tbody>
                 </table>
             </div>
+
+            {showModal &&
+                <ProveedorArticuloModal
+                    title={title}
+                    prova={proveedorArt}
+                    modalType={modalType}
+                    show={showModal}
+                    onHide={() => setShowModal(false)}
+                    refreshData={setRefreshData} />}
 
         </>
     )

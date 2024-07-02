@@ -1,9 +1,9 @@
+import ProveedorTabla from "../components/Tables/ProveedorTabla"
 
-
-function Proveedores() {
-  return (
-    <div style={{padding: "20px"}}>Proveedores</div>
-  )
-}
-
-export default Proveedores
+const Proveedores = () => {
+    return (
+      <div style={{padding: "20px"}}><ProveedorTabla/></div>
+    )
+  }
+  
+  export default Proveedores

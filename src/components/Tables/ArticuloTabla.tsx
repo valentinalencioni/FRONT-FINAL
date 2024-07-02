@@ -75,7 +75,7 @@ function ArticuloTable() {
             stockSeguridad: 0,
             tiempoRevision: 0,
             proveedorPred: proveedor,
-            metodoPred: MetodoPrediccion.ESTACIONALIDAD,
+            metodoPred: null,
         };
     };
 

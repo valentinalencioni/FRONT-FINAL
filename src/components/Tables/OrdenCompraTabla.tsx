@@ -109,7 +109,7 @@ function OrdenCompraTabla() {
                 <td className="py-2 px-4 border-b">{ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : 'Sin Proveedor'}</td>
                 <td className="py-2 px-4 border-b text-center">
                   <div className="d-flex justify-content-center">
-                    {<DetalleButton onClick={() => navigate('/detallesOC')} />}
+                  {<DetalleButton onClick={() => navigate('/detallesOC/' + ordenCompra.id)} />}
                   </div>
                 </td>
                 <td className="py-2 px-4 border-b text-center">

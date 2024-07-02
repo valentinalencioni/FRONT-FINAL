@@ -9,5 +9,18 @@ export const ProveedorService ={
         const data= await response.json();
         return data;
     },
+    createProveedor: async (proveedor: Proveedor): Promise<Proveedor> => {
+        const response = await fetch(`${BASE_URL}/api/v1/proveedor`, {
+            method: "POST",
+            headers: {
+                'Accept': '*/*',
+                'Authorization': `Bearer ` + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(proveedor)
+        });
+        const data= await response.json();
+        return data;
+    },
 }
     

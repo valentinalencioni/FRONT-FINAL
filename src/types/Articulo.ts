@@ -20,5 +20,5 @@ export interface Articulo{
     cantidadAPedir:number;
     tiempoRevision:number;
     proveedorPred: Proveedor;
-    metodoPred: MetodoPrediccion;
+    metodoPred: MetodoPrediccion | null;
 }
