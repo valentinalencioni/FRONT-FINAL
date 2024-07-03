@@ -115,14 +115,14 @@ function ArticuloTable() {
         </div>
            
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-300">
+                <table className="table table-striped table-hover mt-2 shadow-sm">
                     <thead>
                         <tr>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Articulo</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Precio</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Stock actual</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Proveedor predeterminado</th>
-
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Modelo Inventario</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Editar</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Borrar</th>
@@ -135,7 +135,7 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b"> {Number(articulo.precio).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                 <td className="py-2 px-4 border-b">{articulo.stockActual}</td>
                                 <td className="py-2 px-4 border-b">{articulo.proveedorPred ? articulo.proveedorPred.nombreProveedor : 'Sin Proveedor'}</td>
-
+                                <td className="py-2 px-4 border-b">{articulo.modeloInventario.replace('_', ' ')}</td>
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}

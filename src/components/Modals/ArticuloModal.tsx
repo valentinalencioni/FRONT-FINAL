@@ -70,14 +70,14 @@ const ArticuloModal = ({
     fetchProvArt();
   }, []);
   const initialValues: CrearArticuloDTO = {
-    nombre: articulo?.nombre || '',
-    stockActual: articulo?.stockActual || 0,
-    modeloInventario: articulo?.modeloInventario || "",
-    tiempoRevision: articulo?.tiempoRevision || 0,
+    nombre: '',
+    stockActual:  0,
+    modeloInventario: ModeloInventario.LOTE_FIJO,
+    tiempoRevision:  0,
     idProveedorPred: articulo?.proveedorPred || 0,
     tiempoDemora: 0,
-    costoAlmacenamiento: articulo?.costoAlmacenamiento || 0,
-    costoPedido: articulo?.costoPedido || 0,
+    costoAlmacenamiento: 0,
+    costoPedido:  0,
     precioArticuloProveedor: 0,
     //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
   };
@@ -85,11 +85,8 @@ const ArticuloModal = ({
   //CREATE-UPDATE
   const handleSaveUpdate = async (articuloDTO: CrearArticuloDTO) => {
     try {
-
       await ArticuloService.createArticulo(articuloDTO);
-
       toast.success("Artículo creado con éxito");
-
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error");
@@ -135,19 +132,38 @@ const ArticuloModal = ({
   //Esquema YUP DE VALIDACION
   const validationSchema = Yup.object().shape({
     nombre: Yup.string().required('Se requiere el nombre del artículo'),
-    precioArticuloProveedor: Yup.number()
-      .positive('El precio debe ser positivo')
-      .required('El precio debe ser mayor a cero'),
-    tiempoRevision: Yup.number()
-      .positive('El tiempo de revisión debe ser positivo')
-      .required('Se requiere el tiempo de revisión')
-      .nonNullable('El tiempo de revisión no puede ser nulo'),
     stockActual: Yup.number().integer('El stock actual debe ser un entero').required('Este es un campo obligatorio').positive('El stock actual debe ser positivo')
       .nonNullable('El tiempo de revisión no puede ser nulo'),
     modeloInventario: Yup.mixed().oneOf(Object.values(ModeloInventario)).required('Este es un campo obligatorio'),
-    proveedorPred: Yup.object().shape({
+    tiempoRevision: Yup.number()
+      .positive('El tiempo de revisión debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El tiempo de revisión no puede ser nulo'),
+    idProveedorPred: Yup.object().shape({
       id: Yup.number().required('Debe seleccionar un proveedor')
-    }).nullable().required('Debe seleccionar un proveedor')
+    }).nullable().required('Este es un campo obligatorio'),
+
+    tiempoDemora: Yup.number()
+      .positive('El tiempo de demora debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El tiempo de demora no puede ser nulo'),
+
+      costoAlmacenamiento: Yup.number() 
+      .positive('El costo de almacenamiento debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El costo de almacenamiento no puede ser nulo'),
+
+    costoPedido: Yup.number() 
+      .positive('El costo de pedido debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El costo de pedido no puede ser nulo'),
+
+    precioArticuloProveedor: Yup.number()
+      .positive('El precio debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El precio no puede ser nulo'),
+
+
 
   });
 
@@ -184,7 +200,6 @@ const ArticuloModal = ({
           <Modal.Body>
             <div className="overflow-x-auto">
               <Table className='min-w-full bg-white border border-gray-300'>
-
                 <thead className="bg-gray-200">
                   <tr>
                     <th className="py-2 px-4 border-b">Nombre</th>
@@ -193,6 +208,8 @@ const ArticuloModal = ({
                     <th className="py-2 px-4 border-b">Lote Óptimo</th>
                     <th className="py-2 px-4 border-b">Punto de Pedido</th>
                     <th className="py-2 px-4 border-b">Modelo Inventario</th>
+                    <th className="py-2 px-4 border-b">Cantidad a Pedir</th>
+                    <th className="py-2 px-4 border-b"> Cantidad Maxima</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,6 +220,8 @@ const ArticuloModal = ({
                     <td className="py-2 px-4 border-b">{articulo.loteOptimo}</td>
                     <td className="py-2 px-4 border-b">{articulo.puntoPedido}</td>
                     <td className="py-2 px-4 border-b">{articulo.modeloInventario.replace('_', ' ')}</td>
+                    <td className="py-2 px-4 border-b">{articulo.cantidadAPedir}</td>
+                    <td className="py-2 px-4 border-b">{articulo.cantidadMaxima}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -230,6 +249,7 @@ const ArticuloModal = ({
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     isInvalid={Boolean(formik.errors.nombre && formik.touched.nombre)}
+                    placeholder="Ingrese el nombre del artículo"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
                   <Form.Control.Feedback type="invalid">
@@ -240,16 +260,16 @@ const ArticuloModal = ({
                 <Form.Group className="mb-4">
                   <FormLabel className="block text-gray-700">Precio</FormLabel>
                   <Form.Control
-                    name="precio"
+                    name="precioArticuloProveedor"
                     type="number"
-                    value={formik.values.precio}
+                    value={formik.values.precioArticuloProveedor}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.precio && formik.touched.precio)}
+                    isInvalid={Boolean(formik.errors.precioArticuloProveedor && formik.touched.precioArticuloProveedor)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.precio}
+                    {formik.errors.precioArticuloProveedor}
                   </Form.Control.Feedback>
                 </Form.Group>
 
@@ -270,85 +290,49 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                {!isNew && (
-                  <Form.Group className="mb-4">
-                    <Form.Label className="block text-gray-700">Proveedor Articulo</Form.Label>
-                    <Form.Control
-                      as="select"
-                      name="provArt"
-                      value={proveedorSeleccionado?.id}
-                      onChange={(e) => {
-                        const selectedId = Number(e.target.value); // Convertir a número
-                        const provArtSelec = provArt.find(prov => prov.proveedor.id === selectedId) || null;
-                        setprovArtSelec(provArtSelec);
-                        formik.setFieldValue("provArt", provArtSelec);
-                      }}
-                      onBlur={formik.handleBlur}
-                      isInvalid={formik.touched.proveedorPred && !!formik.errors.proveedorPred}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
-                      <option value="">Selecciona un Proveedor</option>
-                      {provArt.map((prov) => (
-                        <option key={prov.proveedor.id} value={prov.proveedor.id}>
-                          {proveedores.find(p => p.id === prov.proveedor.id)?.nombreProveedor}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.errors.proveedorPred?.id}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                )}
                 {/* stockactual */}
+                <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Stock actual</FormLabel>
+                  <Form.Control
+                    name="stockActual"
+                    type="number"
+                    value={formik.values.stockActual}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={Boolean(formik.errors.stockActual && formik.touched.stockActual)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.stockActual}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-                {isNew && (
-                  <Form.Group className="mb-4">
-                    <FormLabel className="block text-gray-700">Stock Actual</FormLabel>
-                    <Form.Control
-                      name="stockActual"
-                      type="number"
-                      value={formik.values.stockActual}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      isInvalid={Boolean(formik.errors.stockActual && formik.touched.stockActual)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {formik.errors.stockActual}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                )}
-
-                {isNew && (
-
-                  <Form.Group className="mb-4">
-                    <FormLabel className="block text-gray-700">Proveedor</FormLabel>
-                    <Form.Control
-                      as="select"
-                      value={formik.values.proveedorPred?.id || ''}
-                      onChange={(e) => {
-                        const selectedId = Number(e.target.value); // Convertir a número
-                        const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
-                        setProveedorSeleccionado(selectedProveedor);
-                        formik.setFieldValue("proveedorPred", selectedProveedor || { id: '' });
-                      }}
-                      onBlur={formik.handleBlur}
-                      isInvalid={formik.touched.proveedorPred && !!formik.errors.proveedorPred?.id}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
-                      <option value="">Selecciona un Proveedor</option>
-                      {Object.values(proveedores).map(proveedor => (
-                        <option key={proveedor.id} value={proveedor.id}>
-                          {proveedor.nombreProveedor}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.errors.proveedorPred?.id}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-
-                )}
+                <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Proveedor</FormLabel>
+                  <Form.Control
+                    as="select"
+                    value={formik.values.idProveedorPred?.id || ''}
+                    onChange={(e) => {
+                      const selectedId = Number(e.target.value); // Convertir a número
+                      const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
+                      setProveedorSeleccionado(selectedProveedor);
+                      formik.setFieldValue("proveedorPred", selectedProveedor || { id: '' });
+                    }}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred?.id}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  >
+                    <option value="">Selecciona un Proveedor</option>
+                    {Object.values(proveedores).map(proveedor => (
+                      <option key={proveedor.id} value={proveedor.id}>
+                        {proveedor.nombreProveedor}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.idProveedorPred?.id}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
                 <Form.Group className="mb-4">
                   <FormLabel className="block text-gray-700">Modelo Inventario</FormLabel>
@@ -372,6 +356,89 @@ const ArticuloModal = ({
                     {formik.errors.modeloInventario}
                   </Form.Control.Feedback>
                 </Form.Group>
+
+                {/* tiempoDemora */}
+                <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Tiempo de demora del proveedor </FormLabel>
+                  <Form.Control
+                    name="tiempoDemora"
+                    type="number"
+                    value={formik.values.tiempoDemora}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={Boolean(formik.errors.tiempoDemora && formik.touched.tiempoDemora)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.tiempoDemora}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+
+                
+                <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Costo de almacenamiento</FormLabel>
+                  <Form.Control
+                    name="costoAlmacenamiento"
+                    type="number"
+                    value={formik.values.costoAlmacenamiento}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={Boolean(formik.errors.costoAlmacenamiento && formik.touched.costoAlmacenamiento)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.costoPedido}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-4">
+                  <FormLabel className="block text-gray-700">Costo de pedido</FormLabel>
+                  <Form.Control
+                    name="costoPedido"
+                    type="number"
+                    value={formik.values.costoPedido}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={Boolean(formik.errors.costoPedido && formik.touched.costoPedido)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.costoPedido}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+
+
+                {/* {!isNew && (
+                  <Form.Group className="mb-4">
+                    <Form.Label className="block text-gray-700">Proveedor Articulo</Form.Label>
+                    <Form.Control
+                      as="select"
+                      name="provArt"
+                      value={proveedorSeleccionado?.id}
+                      onChange={(e) => {
+                        const selectedId = Number(e.target.value); // Convertir a número
+                        const provArtSelec = provArt.find(prov => prov.proveedor.id === selectedId) || null;
+                        setprovArtSelec(provArtSelec);
+                        formik.setFieldValue("provArt", provArtSelec);
+                      }}
+                      onBlur={formik.handleBlur}
+                      isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    >
+                      <option value="">Selecciona un Proveedor</option>
+                      {provArt.map((prov) => (
+                        <option key={prov.proveedor.id} value={prov.proveedor.id}>
+                          {proveedores.find(p => p.id === prov.proveedor.id)?.nombreProveedor}
+                        </option>
+                      ))}
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.idProveedorPred?.id}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                )} */}
 
 
 
