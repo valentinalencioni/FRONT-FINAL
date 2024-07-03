@@ -160,7 +160,10 @@ function OrdenCompraTabla() {
                 </td>
                 <td className="py-2 px-4 border-b text-center">
                   <button
-                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE
+                      ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold'
+                      : 'bg-gray-500 text-gray-600 cursor-not-allowed'
+                      }`}
                     onClick={() => handleAceptar(ordenCompra.id)}
                     disabled={ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.PENDIENTE}
                   >
@@ -169,7 +172,10 @@ function OrdenCompraTabla() {
                 </td>
                 <td className="py-2 px-4 border-b text-center">
                   <button
-                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.EN_CURSO ? 'bg-green-500 hover:bg-green-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.EN_CURSO
+                      ? 'bg-green-500 hover:bg-green-700 text-white font-bold'
+                      : 'bg-gray-500 text-gray-600 cursor-not-allowed'
+                      }`}
                     onClick={() => handleFinalizar(ordenCompra.id)}
                     disabled={ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.EN_CURSO}
                   >
@@ -178,9 +184,18 @@ function OrdenCompraTabla() {
                 </td>
                 <td className="py-2 px-4 border-b text-center">
                   <button
-                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.PENDIENTE ? 'bg-red-500 hover:bg-red-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE ||
+                        ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.FINALIZADA ||
+                        ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.CANCELADA
+                        ? 'bg-gray-500 text-gray-600 cursor-not-allowed'
+                        : 'bg-red-500 hover:bg-red-700 text-white font-bold'
+                      }`}
                     onClick={() => handleCancelar(ordenCompra.id)}
-                    disabled={ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE}
+                    disabled={
+                      ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE ||
+                      ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.FINALIZADA ||
+                      ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.CANCELADA
+                    }
                   >
                     Cancelar
                   </button>

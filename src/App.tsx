@@ -13,7 +13,7 @@ function App() {
     <Router>
       <NavBar/>
       <AppRoutes/>
-      <ToastContainer/>
+      <ToastContainer position="bottom-right" autoClose={3000}/>
     </Router>
     
     </>
