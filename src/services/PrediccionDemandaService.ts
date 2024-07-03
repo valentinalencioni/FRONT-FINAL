@@ -35,7 +35,7 @@ export const PrediccionDemandaService ={
     calcularError: async (error: ParametrosPrediccionDTO): Promise<any> =>{
 
         const response = await fetch(`${BASE_URL}/api/v1/prediccionDemanda/error`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },

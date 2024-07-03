@@ -127,7 +127,7 @@ function PrediccionDemandaTabla() {
                             <tr key={prediccionDemanda.id}>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.id}</td>
                                 <td className="py-2 px-4 border-b">
-                                    {new Date(prediccionDemanda.fechaPrediccion).toLocaleDateString()}
+                                    {prediccionDemanda.fechaPrediccion}
                                 </td>
                                 <td className="py-2 px-4 border-b">
                                     {Number(prediccionDemanda.valorPrediccion).toLocaleString("es-ES", {
@@ -139,7 +139,7 @@ function PrediccionDemandaTabla() {
                                     {prediccionDemanda.demanda ? prediccionDemanda.demanda.id : "Sin Demanda"}
                                 </td>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.articulo ? prediccionDemanda.articulo.nombre : "Sin Articulo"}</td>
-                                <td className="py-2 px-4 border-b">{prediccionDemanda.metodoPrediccion.replace("_", " ")}</td>
+                                <td className="py-2 px-4 border-b">{prediccionDemanda.metodoPrediccion ? prediccionDemanda.metodoPrediccion.replace("_", " ") : "Sin Metodo"}</td>
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         <DeleteButton

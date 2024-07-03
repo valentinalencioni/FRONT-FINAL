@@ -87,7 +87,6 @@ export const ArticuloService = {
 
     },
     modeloArticulo: async (id: number): Promise<void> => {
-
         const response = await fetch(`${BASE_URL}/api/v1/articulos/modelo-inventario/${id}`, {
             method: 'PUT',
             headers: {

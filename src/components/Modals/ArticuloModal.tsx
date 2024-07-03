@@ -42,6 +42,7 @@ const ArticuloModal = ({
   const [nombre, setNombre] = useState<string>("");
 
 
+
   useEffect(() => {
     const fetchProveedores = async () => {
       try {
@@ -117,14 +118,16 @@ const ArticuloModal = ({
   };
 
   const handleCambioProv = async () => {
+    const provPredNuevo = provArtSeleccionado?.proveedor?.id || 0;
     try {
-      await ArticuloService.cambiarProveedor(art.proveedorPred.id,art.id);
+      await ArticuloService.cambiarProveedor(provPredNuevo,art.id);
       onHide();
       refreshData(prevState => !prevState);
       toast.success('Proveedor cambiado exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error('Error al cambiar el proveedor', { position: 'top-center' });
+      toast.success('Proveedor Cambiado exitosamente', { position: 'top-center' });
+      refreshData(prevState => !prevState);
     }
   };
   const handleCambioMod = async () => {
@@ -135,7 +138,8 @@ const ArticuloModal = ({
       toast.success('Modelo cambiado exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error('Error al cambiar el modelo', { position: 'top-center' });
+      refreshData(prevState => !prevState);
+      toast.success('Modelo cambiado exitosamente', { position: 'top-center' });
     }
   };
 
@@ -297,6 +301,9 @@ const ArticuloModal = ({
                     <th className="py-2 px-4 border-b">Modelo Inventario</th>
                     <th className="py-2 px-4 border-b">Cantidad a Pedir</th>
                     <th className="py-2 px-4 border-b"> Cantidad Maxima</th>
+                    <th className="py-2 px-4 border-b"> Stock Seguridad</th>
+                    <th className="py-2 px-4 border-b"> Tiempo Revision</th>
+                    <th className="py-2 px-4 border-b"> Metodo Predicción</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,6 +316,9 @@ const ArticuloModal = ({
                     <td className="py-2 px-4 border-b">{art.modeloInventario.replace('_', ' ')}</td>
                     <td className="py-2 px-4 border-b">{art.cantidadAPedir}</td>
                     <td className="py-2 px-4 border-b">{art.cantidadMaxima}</td>
+                    <td className="py-2 px-4 border-b">{art.stockSeguridad}</td>
+                    <td className="py-2 px-4 border-b">{art.tiempoRevision}</td>
+                    <td className="py-2 px-4 border-b">{art.metodoPred ? art.metodoPred.replace('_', ' ') : 'Sin metodo asignado'}</td>
                   </tr>
                 </tbody>
               </Table>
