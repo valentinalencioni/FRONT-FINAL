@@ -51,12 +51,6 @@ function ArticuloTable() {
     }, [refreshData]);
     console.log(JSON.stringify(proveedores, null, 2));
 
-
-    const proveedor: Proveedor = {
-        id: 0,
-        nombreProveedor: ''
-    };
-
     const initializableNewArticulo = (): Articulo => {
         return {
             id: 0,
@@ -74,7 +68,10 @@ function ArticuloTable() {
             stockActual: 0,
             stockSeguridad: 0,
             tiempoRevision: 0,
-            proveedorPred: proveedor,
+            proveedorPred:{
+                id: 0,
+                nombreProveedor: '',
+            },
             metodoPred: null,
         };
     };
@@ -144,11 +141,11 @@ function ArticuloTable() {
                                         {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}
                                     </div>                                  
                                 </td>
-                                <td className="py-2 px-4 border-b text-center">
+                                {/* <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} />}
                                     </div>                                   
-                                </td>
+                                </td> */}
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                           {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
@@ -164,7 +161,7 @@ function ArticuloTable() {
                 <ArticuloModal
                     show={showModal}
                     onHide={() => setShowModal(false)}
-                    nombre={'nombre'}
+                    title={'nombre'}
                     modalType={modalType}
                     art={articulo}
                     refreshData={setRefreshData}

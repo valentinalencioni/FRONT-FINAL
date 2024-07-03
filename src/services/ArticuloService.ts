@@ -1,4 +1,5 @@
 import { Articulo } from "../types/Articulo";
+import { CrearArticuloDTO } from "../types/CrearArticuloDTO";
 import { FaltanteDTO } from "../types/FaltanteDTO";
 import { ReponerDTO } from "../types/ReponerDTO";
 
@@ -19,7 +20,7 @@ export const ArticuloService = {
         return data;
     },
     
-    createArticulo: async (articulo: Articulo): Promise<Articulo> => {
+    createArticulo: async (articuloDto: CrearArticuloDTO): Promise<any> => {
         const response = await fetch(`${BASE_URL}/api/v1/articulos`, {
             method: "POST",
             headers: {
@@ -27,7 +28,7 @@ export const ArticuloService = {
                 'Authorization': `Bearer ` + localStorage.getItem('token'),
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(articulo)
+            body: JSON.stringify(articuloDto)
         });
         const data= await response.json();
         return data;

@@ -17,7 +17,7 @@ import { ProveedorArticuloService } from "../../services/ProveedorArticuloServic
 type ArticuloModalProps = {
   show: boolean;
   onHide: () => void;
-  nombre: string;
+  title: string;
   modalType: ModalType;
   art: Articulo;
   refreshData: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +26,7 @@ type ArticuloModalProps = {
 const ArticuloModal = ({
   show,
   onHide,
-  nombre,
+  title,
   modalType,
   art: articulo,
   refreshData,
@@ -229,7 +229,7 @@ const ArticuloModal = ({
         <Modal show={show} onHide={onHide} centered backdrop="static">
           <div className="p-6 bg-white rounded-lg shadow-xl">
             <Modal.Header closeButton>
-              <ModalTitle className="text-lg font-bold">{nombre}</ModalTitle>
+              <ModalTitle className="text-lg font-bold">Nuevo Articulo</ModalTitle>
             </Modal.Header>
             <Modal.Body>
               <Form onSubmit={formik.handleSubmit}>
