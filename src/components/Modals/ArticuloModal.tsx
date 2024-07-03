@@ -69,18 +69,7 @@ const ArticuloModal = ({
     fetchProveedores();
     fetchProvArt();
   }, []);
-  const initialValues: CrearArticuloDTO = {
-    nombre: '',
-    stockActual:  0,
-    modeloInventario: ModeloInventario.LOTE_FIJO,
-    tiempoRevision:  0,
-    idProveedorPred: articulo?.proveedorPred || 0,
-    tiempoDemora: 0,
-    costoAlmacenamiento: 0,
-    costoPedido:  0,
-    precioArticuloProveedor: 0,
-    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
-  };
+
 
   //CREATE-UPDATE
   const handleSaveUpdate = async (articuloDTO: CrearArticuloDTO) => {
@@ -95,6 +84,18 @@ const ArticuloModal = ({
     refreshData(prevState => !prevState);
   };
 
+  const initialValues: CrearArticuloDTO = {
+    nombre: '',
+    stockActual:  0,
+    modeloInventario: ModeloInventario.LOTE_FIJO,
+    tiempoRevision:  0,
+    idProveedorPred: articulo?.proveedorPred,
+    tiempoDemora: 0,
+    costoAlmacenamiento: 0,
+    costoPedido:  0,
+    precioArticuloProveedor: 0,
+    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
+  };
   // const [calculado, setCalculado] = useState({ initialValues });
 
   const handleCalculate = async () => {
@@ -311,19 +312,19 @@ const ArticuloModal = ({
                   <FormLabel className="block text-gray-700">Proveedor</FormLabel>
                   <Form.Control
                     as="select"
-                    value={formik.values.idProveedorPred?.id || ''}
+                    value={proveedorSeleccionado?.id}
                     onChange={(e) => {
                       const selectedId = Number(e.target.value); // Convertir a número
                       const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
                       setProveedorSeleccionado(selectedProveedor);
-                      formik.setFieldValue("proveedorPred", selectedProveedor || { id: '' });
+                      formik.setFieldValue("proveedorPred", selectedProveedor);
                     }}
                     onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred?.id}
+                    isInvalid={formik.touched.idProveedorPred?.id && !!formik.errors.idProveedorPred?.id}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   >
                     <option value="">Selecciona un Proveedor</option>
-                    {Object.values(proveedores).map(proveedor => (
+                    {proveedores.map(proveedor => (
                       <option key={proveedor.id} value={proveedor.id}>
                         {proveedor.nombreProveedor}
                       </option>
