@@ -55,7 +55,7 @@ function OrdenCompraTabla() {
     try {
       await OrdenCompraService.ordenEnCurso(id);
       setSuccessMessage("Se cambió a EN CURSO correctamente");
-      setRefreshData(!refreshData);
+      setRefreshData(prev => !prev);
     } catch (error) {
       console.error("Error al cambiar a EN CURSO", error);
     }
@@ -65,7 +65,7 @@ function OrdenCompraTabla() {
     try {
       await OrdenCompraService.ordenFinalizar(id);
       setSuccessMessage("Se cambió a FINALIZADA correctamente");
-      setRefreshData(!refreshData);
+      setRefreshData(prev => !prev);
     } catch (error) {
       console.error("Error al cambiar a FINALIZADA", error);
     }
@@ -75,7 +75,7 @@ function OrdenCompraTabla() {
     try {
       await OrdenCompraService.ordenCancelar(id);
       setSuccessMessage("Se cambió a CANCELADA correctamente");
-      setRefreshData(!refreshData);
+      setRefreshData(prev => !prev);
     } catch (error) {
       console.error("Error al cambiar a CANCELADA", error);
     }
@@ -145,7 +145,7 @@ function OrdenCompraTabla() {
                     maximumFractionDigits: 2,
                   })}
                 </td>
-                <td className="py-2 px-4 border-b">{ordenCompra.estadoOrdenCompra}</td>
+                <td className="py-2 px-4 border-b">{ordenCompra.estadoOrdenCompra.replace("_", " ")}</td>
                 <td className="py-2 px-4 border-b">
                   {ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : "Sin Proveedor"}
                 </td>
@@ -185,10 +185,10 @@ function OrdenCompraTabla() {
                 <td className="py-2 px-4 border-b text-center">
                   <button
                     className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE ||
-                        ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.FINALIZADA ||
-                        ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.CANCELADA
-                        ? 'bg-gray-500 text-gray-600 cursor-not-allowed'
-                        : 'bg-red-500 hover:bg-red-700 text-white font-bold'
+                      ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.FINALIZADA ||
+                      ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.CANCELADA
+                      ? 'bg-gray-500 text-gray-600 cursor-not-allowed'
+                      : 'bg-red-500 hover:bg-red-700 text-white font-bold'
                       }`}
                     onClick={() => handleCancelar(ordenCompra.id)}
                     disabled={
@@ -220,7 +220,16 @@ function OrdenCompraTabla() {
           {successMessage}
         </div>
       )}
+      <OrdenCompraModal
+        title={title}
+        ord={ordenCompra}
+        modalType={modalType}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        refreshData={setRefreshData}
+      />
     </>
+
   );
 }
 
