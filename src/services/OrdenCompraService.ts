@@ -57,5 +57,67 @@ export const OrdenCompraService = {
         const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/findOrdenesByEstado?filtroEstado=${estado}`);
         const data = await response.json();
         return data;
-    }
+    },
+
+    //Cambios de estados
+    ordenEnCurso: async (id: number) => {
+        try {
+          const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/en-curso/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Error al cambiar el estado de la orden de compra');
+          }
+    
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error en ordenEnCurso:', error);
+          throw error;
+        }
+      },
+      ordenFinalizar: async (id: number) => {
+        try {
+          const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/finalizar/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Error al cambiar el estado de la orden de compra');
+          }
+    
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error en ordenEnCurso:', error);
+          throw error;
+        }
+      },
+      ordenCancelar: async (id: number) => {
+        try {
+          const response = await fetch(`${BASE_URL}/api/v1/ordenCompra/cancelar/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Error al cambiar el estado de la orden de compra');
+          }
+    
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error en ordenEnCurso:', error);
+          throw error;
+        }
+      },
 }

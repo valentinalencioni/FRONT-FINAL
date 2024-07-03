@@ -13,6 +13,7 @@ function OrdenCompraTabla() {
 
   const [ordenesCompra, setOrdenesCompra] = useState<OrdenCompra[]>([]);
   const [refreshData, setRefreshData] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrdenesCompra = async () => {
@@ -21,8 +22,8 @@ function OrdenCompraTabla() {
         setOrdenesCompra(Array.isArray(ordenesCompra) ? ordenesCompra : []);
       } catch (error) {
         console.error("Error fetching Ordenes de Compra", error);
-      };
-    }
+      }
+    };
     fetchOrdenesCompra();
   }, [refreshData]);
 
@@ -43,38 +44,69 @@ function OrdenCompraTabla() {
   const [modalType, setModalType] = useState<ModalType>(ModalType.NONE);
   const [search, setSearch] = useState("");
 
-
-
-
   const handleClick = (title: string, ord: OrdenCompra, modal: ModalType) => {
     setOrdenCompra(ord);
     setTitle(title);
     setShowModal(true);
     setModalType(modal);
   };
-  //Otro manejo de funciones como filtrar por estados o confirmar ordenes.
 
-  //Metodo de filtrado 
-  let results: any[] = []
+  const handleAceptar = async (id: number) => {
+    try {
+      await OrdenCompraService.ordenEnCurso(id);
+      setSuccessMessage("Se cambió a EN CURSO correctamente");
+      setRefreshData(!refreshData);
+    } catch (error) {
+      console.error("Error al cambiar a EN CURSO", error);
+    }
+  };
+
+  const handleFinalizar = async (id: number) => {
+    try {
+      await OrdenCompraService.ordenFinalizar(id);
+      setSuccessMessage("Se cambió a FINALIZADA correctamente");
+      setRefreshData(!refreshData);
+    } catch (error) {
+      console.error("Error al cambiar a FINALIZADA", error);
+    }
+  };
+
+  const handleCancelar = async (id: number) => {
+    try {
+      await OrdenCompraService.ordenCancelar(id);
+      setSuccessMessage("Se cambió a CANCELADA correctamente");
+      setRefreshData(!refreshData);
+    } catch (error) {
+      console.error("Error al cambiar a CANCELADA", error);
+    }
+  };
+
+  // Método de filtrado
+  let results: any[] = [];
   if (!search) {
-    results = ordenesCompra
+    results = ordenesCompra;
   } else {
-    results = ordenesCompra.filter((dato: { estadoOrdenCompra: string; }) =>
+    results = ordenesCompra.filter((dato: { estadoOrdenCompra: string }) =>
       dato.estadoOrdenCompra.toLowerCase().includes(search.toLowerCase())
-    )
+    );
   }
 
-  //funcion de busqueda 
-  const searcher = (e: { target: { value: SetStateAction<string>; }; }) => {
-    setSearch(e.target.value)
+  // Función de búsqueda
+  const searcher = (e: { target: { value: SetStateAction<string> } }) => {
+    setSearch(e.target.value);
     console.log(e.target.value);
-  }
+  };
 
-  const navigate = useNavigate();
   return (
     <>
       <div className="p-4">
-        <input value={search} onChange={searcher} type="text" placeholder="Buscar Ordenes por Estado" className="form-control" />
+        <input
+          value={search}
+          onChange={searcher}
+          type="text"
+          placeholder="Buscar Ordenes por Estado"
+          className="form-control"
+        />
       </div>
       <div className="flex justify-start space-x-2 ">
         <button
@@ -92,56 +124,89 @@ function OrdenCompraTabla() {
               <th className="py-2 px-4 border-b bg-dark-subtle">Fecha</th>
               <th className="py-2 px-4 border-b bg-dark-subtle">Total orden</th>
               <th className="py-2 px-4 border-b bg-dark-subtle">Estado</th>
-
               <th className="py-2 px-4 border-b bg-dark-subtle">Proveedor</th>
               <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
-              <th className="py-2 px-4 border-b bg-dark-subtle">Modificar</th>
+              <th className="py-2 px-4 border-b bg-dark-subtle">Aceptar</th>
+              <th className="py-2 px-4 border-b bg-dark-subtle">Finalizar</th>
+              <th className="py-2 px-4 border-b bg-dark-subtle">Cancelar</th>
               <th className="py-2 px-4 border-b bg-dark-subtle">Eliminar</th>
             </tr>
           </thead>
           <tbody className="table-group-divider">
-            {results.map(ordenCompra => (
-              <tr>
+            {results.map((ordenCompra) => (
+              <tr key={ordenCompra.id}>
                 <td className="py-2 px-4 border-b">{ordenCompra.id}</td>
-                <td className="py-2 px-4 border-b"> {new Date(ordenCompra.fechaOrdenCompra).toLocaleDateString()}</td>
-                <td className="py-2 px-4 border-b">{Number(ordenCompra.totalOrdenCompra).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="py-2 px-4 border-b">
+                  {new Date(ordenCompra.fechaOrdenCompra).toLocaleDateString()}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {Number(ordenCompra.totalOrdenCompra).toLocaleString("es-ES", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
                 <td className="py-2 px-4 border-b">{ordenCompra.estadoOrdenCompra}</td>
-                <td className="py-2 px-4 border-b">{ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : 'Sin Proveedor'}</td>
-                <td className="py-2 px-4 border-b text-center">
-                  <div className="d-flex justify-content-center">
-                  {<DetalleButton onClick={() => handleClick("Detalle orden de compra", ordenCompra, ModalType.DETAIL)}/>}
-                  </div>
+                <td className="py-2 px-4 border-b">
+                  {ordenCompra.proveedor ? ordenCompra.proveedor.nombreProveedor : "Sin Proveedor"}
                 </td>
                 <td className="py-2 px-4 border-b text-center">
                   <div className="d-flex justify-content-center">
-                    {<EditButton onClick={() => handleClick("Editar orden de compra", ordenCompra, ModalType.UPDATE)} />}
+                    <DetalleButton
+                      onClick={() =>
+                        handleClick("Detalle orden de compra", ordenCompra, ModalType.DETAIL)
+                      }
+                    />
                   </div>
                 </td>
                 <td className="py-2 px-4 border-b text-center">
+                  <button
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    onClick={() => handleAceptar(ordenCompra.id)}
+                    disabled={ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.PENDIENTE}
+                  >
+                    Aceptar
+                  </button>
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.EN_CURSO ? 'bg-green-500 hover:bg-green-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    onClick={() => handleFinalizar(ordenCompra.id)}
+                    disabled={ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.EN_CURSO}
+                  >
+                    Finalizar
+                  </button>
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button
+                    className={`py-2 px-4 rounded ${ordenCompra.estadoOrdenCompra !== EstadoOrdenCompra.PENDIENTE ? 'bg-red-500 hover:bg-red-700 text-white font-bold' : 'bg-gray-500 text-gray-600 cursor-not-allowed'}`}
+                    onClick={() => handleCancelar(ordenCompra.id)}
+                    disabled={ordenCompra.estadoOrdenCompra === EstadoOrdenCompra.PENDIENTE}
+                  >
+                    Cancelar
+                  </button>
+                </td>
+                <td className="py-2 px-4 border-b text-center">
                   <div className="d-flex justify-content-center">
-                    {<DeleteButton onClick={() => handleClick("Eliminar orden de compra", ordenCompra, ModalType.DELETE)} />}
+                    <DeleteButton
+                      onClick={() =>
+                        handleClick("Eliminar orden de compra", ordenCompra, ModalType.DELETE)
+                      }
+                    />
                   </div>
                 </td>
               </tr>
-
             ))}
           </tbody>
         </table>
       </div>
 
-      <OrdenCompraModal
-        title={title}
-        ord={ordenCompra}
-        modalType={modalType}
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        refreshData={setRefreshData}
-      />
+      {successMessage && (
+        <div className="p-4 bg-green-200 text-green-800 rounded mt-4">
+          {successMessage}
+        </div>
+      )}
     </>
   );
-
-
-
 }
 
 export default OrdenCompraTabla;

@@ -181,6 +181,7 @@ const ProveedorArticuloModal = ({
                   value={costoAlmacenamiento}
                   onChange={(e) => setCostoAlmacenamiento(Number(e.target.value))}
                   min={0}
+                  step="0.01"
                 />
               </Form.Group>
               <Form.Group>

@@ -143,9 +143,7 @@ const VentaModal = ({
                         <tr>
                           <th>Articulo</th>
                           <th>Cantidad</th>
-                          <th>SubTotal</th>
-                          <th>Fecha Venta</th>
-        
+                          <th>Subtotal</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -154,8 +152,6 @@ const VentaModal = ({
                             <td>{ventaDetalles.articulo?.nombre}</td>
                             <td>{ventaDetalles.cantidadVenta}</td>
                             <td>{ventaDetalles.subtotal}</td>
-                            <td>{new Date(ventaDetalles.idVenta?.fechaVenta).toLocaleDateString()}</td>
-
                           </tr>
                         ))}
                       </tbody>
