@@ -21,17 +21,17 @@ export const ArticuloService = {
     },
     
     createArticulo: async (articuloDto: CrearArticuloDTO): Promise<any> => {
-        const response = await fetch(`${BASE_URL}/api/v1/articulos`, {
+        const response = await fetch(`${BASE_URL}/api/v1/articulos/crear`, {
             method: "POST",
             headers: {
-                'Accept': '*/*',
-                'Authorization': `Bearer ` + localStorage.getItem('token'),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(articuloDto)
         });
-        const data= await response.json();
-        return data;
+        if (!response.ok) {
+            throw new Error('Error al crear Articulo');
+        }
+        return await response.json();
     },
 
     updateArticulo: async (art: Articulo): Promise<Articulo> => {
@@ -85,6 +85,35 @@ export const ArticuloService = {
         const data= await response.json();
         return data;
 
+    },
+    modeloArticulo: async (id: number): Promise<void> => {
+
+        const response = await fetch(`${BASE_URL}/api/v1/articulos/modelo-inventario/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al cambiar modelo');
+        }
+        const data = await response.json();
+        return data;
+    },
+
+    cambiarProveedor: async (proveedorId: number, articuloId: number): Promise<void> =>{
+
+        const response = await fetch(`${BASE_URL}/api/v1/articulos/valores-proveedor/${proveedorId}/${articuloId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al cambiar proveedor');
+        }
+        const data = await response.json();
+        return data;
     },
 
 

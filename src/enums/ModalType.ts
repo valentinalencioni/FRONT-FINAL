@@ -5,4 +5,6 @@ export enum ModalType{
     DELETE,
     DETAIL,
     VIEW,
+    PROVE,
+    INVEN,
 }

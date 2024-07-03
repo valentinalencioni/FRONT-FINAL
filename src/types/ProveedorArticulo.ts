@@ -7,6 +7,6 @@ export interface ProveedorArticulo{
     costoAlmacenamiento: number,
     costoPedido: number,
     precioArticuloProveedor: number,
-    articulo: Articulo,
-    proveedor: Proveedor,
+    articulo: Articulo | null,
+    proveedor: Proveedor | null,
 }

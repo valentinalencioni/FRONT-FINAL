@@ -37,7 +37,7 @@ const ArticuloModal = ({
   const [isNew, setIsNew] = useState(articulo.id === 0);
   const [provArt, setProvArt] = useState<ProveedorArticulo[]>([]);
   const [provArtSelec, setprovArtSelec] = useState<ProveedorArticulo | null>(null);
-
+  const [articuloProvArt, setArticuloProvArt] = useState<Articulo | null>(null);
 
   useEffect(() => {
     setIsNew(articulo.id === 0);
@@ -70,11 +70,77 @@ const ArticuloModal = ({
     fetchProvArt();
   }, []);
 
+  const initialValues: CrearArticuloDTO = {
+    nombre: '',
+    stockActual: 0,
+    modeloInventario: ModeloInventario.LOTE_FIJO,
+    tiempoRevision: 0,
+    idProveedorPred:proveedorSeleccionado?.id,
+    tiempoDemora: 0,
+    costoAlmacenamiento: 0,
+    costoPedido: 0,
+    precioArticuloProveedor: 0,
+    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
+  };
+
+  //Esquema YUP DE VALIDACION
+  const validationSchema = Yup.object().shape({
+    nombre: Yup.string().required('Se requiere el nombre del artículo'),
+    stockActual: Yup.number().integer('El stock actual debe ser un entero').required('Este es un campo obligatorio').positive('El stock actual debe ser positivo')
+      .nonNullable('El tiempo de revisión no puede ser nulo'),
+    modeloInventario: Yup.mixed().oneOf(Object.values(ModeloInventario)).required('Este es un campo obligatorio'),
+    tiempoRevision: Yup.number()
+      .positive('El tiempo de revisión debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El tiempo de revisión no puede ser nulo'),
+    idProveedorPred: Yup.object().shape({
+      id: Yup.number().required('Debe seleccionar un proveedor')
+    }).nullable().required('Este es un campo obligatorio'),
+
+    tiempoDemora: Yup.number()
+      .positive('El tiempo de demora debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El tiempo de demora no puede ser nulo'),
+
+    costoAlmacenamiento: Yup.number()
+      .positive('El costo de almacenamiento debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El costo de almacenamiento no puede ser nulo'),
+
+    costoPedido: Yup.number()
+      .positive('El costo de pedido debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El costo de pedido no puede ser nulo'),
+
+    precioArticuloProveedor: Yup.number()
+      .positive('El precio debe ser positivo')
+      .required('Este es un campo obligatorio')
+      .nonNullable('El precio no puede ser nulo'),
+  });
+
+
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: (articuloDTO: CrearArticuloDTO) => handleSaveUpdate(articuloDTO),
+  });
 
   //CREATE-UPDATE
-  const handleSaveUpdate = async (articuloDTO: CrearArticuloDTO) => {
+  const handleSaveUpdate = async (formikValues: CrearArticuloDTO) => {
+
+    const articuloDTO: CrearArticuloDTO = {
+      ...formikValues,
+      // No incluyas proveedorArticuloDTO en el DTO
+    }
+
     try {
       await ArticuloService.createArticulo(articuloDTO);
+      const proveedorArticulo = inicializarProvArt(articuloDTO);
+      setArticuloProvArt(articulo);
+      setprovArtSelec(proveedorArticulo);
       toast.success("Artículo creado con éxito");
     } catch (error) {
       console.error(error);
@@ -84,18 +150,7 @@ const ArticuloModal = ({
     refreshData(prevState => !prevState);
   };
 
-  const initialValues: CrearArticuloDTO = {
-    nombre: '',
-    stockActual:  0,
-    modeloInventario: ModeloInventario.LOTE_FIJO,
-    tiempoRevision:  0,
-    idProveedorPred: articulo?.proveedorPred,
-    tiempoDemora: 0,
-    costoAlmacenamiento: 0,
-    costoPedido:  0,
-    precioArticuloProveedor: 0,
-    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
-  };
+
   // const [calculado, setCalculado] = useState({ initialValues });
 
   const handleCalculate = async () => {
@@ -130,52 +185,21 @@ const ArticuloModal = ({
     refreshData(prevState => !prevState);
   }
 
-  //Esquema YUP DE VALIDACION
-  const validationSchema = Yup.object().shape({
-    nombre: Yup.string().required('Se requiere el nombre del artículo'),
-    stockActual: Yup.number().integer('El stock actual debe ser un entero').required('Este es un campo obligatorio').positive('El stock actual debe ser positivo')
-      .nonNullable('El tiempo de revisión no puede ser nulo'),
-    modeloInventario: Yup.mixed().oneOf(Object.values(ModeloInventario)).required('Este es un campo obligatorio'),
-    tiempoRevision: Yup.number()
-      .positive('El tiempo de revisión debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El tiempo de revisión no puede ser nulo'),
-    idProveedorPred: Yup.object().shape({
-      id: Yup.number().required('Debe seleccionar un proveedor')
-    }).nullable().required('Este es un campo obligatorio'),
-
-    tiempoDemora: Yup.number()
-      .positive('El tiempo de demora debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El tiempo de demora no puede ser nulo'),
-
-      costoAlmacenamiento: Yup.number() 
-      .positive('El costo de almacenamiento debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El costo de almacenamiento no puede ser nulo'),
-
-    costoPedido: Yup.number() 
-      .positive('El costo de pedido debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El costo de pedido no puede ser nulo'),
-
-    precioArticuloProveedor: Yup.number()
-      .positive('El precio debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El precio no puede ser nulo'),
 
 
 
-  });
 
-  const formik = useFormik({
-    initialValues: initialValues,
-    validationSchema: validationSchema,
-    validateOnChange: true,
-    validateOnBlur: true,
-    onSubmit: (articuloDTO: CrearArticuloDTO) => handleSaveUpdate(articuloDTO),
-  });
-
+  const inicializarProvArt = (formikValues: CrearArticuloDTO): ProveedorArticulo => {
+    return {
+      id: 0,
+      tiempoDemora: formikValues.tiempoDemora,
+      costoAlmacenamiento: formikValues.costoAlmacenamiento,
+      costoPedido: formikValues.costoPedido,
+      precioArticuloProveedor: formikValues.precioArticuloProveedor,
+      articulo: articuloProvArt, // Esto se llenará en el backend
+      proveedor: proveedorSeleccionado,
+    };
+  };
   return (
     <>
 
@@ -315,12 +339,12 @@ const ArticuloModal = ({
                     value={proveedorSeleccionado?.id}
                     onChange={(e) => {
                       const selectedId = Number(e.target.value); // Convertir a número
-                      const selectedProveedor = proveedores.find(proveedor => proveedor.id === selectedId) || null;
-                      setProveedorSeleccionado(selectedProveedor);
-                      formik.setFieldValue("proveedorPred", selectedProveedor);
+                      const proveedorSeleccionado = proveedores.find(proveedor => proveedor.id === selectedId) || null;
+                      setProveedorSeleccionado(proveedorSeleccionado);
+                      formik.setFieldValue("proveedorPred", proveedorSeleccionado);
                     }}
                     onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.idProveedorPred?.id && !!formik.errors.idProveedorPred?.id}
+                    isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   >
                     <option value="">Selecciona un Proveedor</option>
@@ -331,7 +355,7 @@ const ArticuloModal = ({
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.idProveedorPred?.id}
+                    {formik.errors.idProveedorPred}
                   </Form.Control.Feedback>
                 </Form.Group>
 
@@ -375,8 +399,6 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-
-                
                 <Form.Group className="mb-4">
                   <FormLabel className="block text-gray-700">Costo de almacenamiento</FormLabel>
                   <Form.Control
@@ -409,8 +431,6 @@ const ArticuloModal = ({
                   </Form.Control.Feedback>
                 </Form.Group>
 
-
-
                 {/* {!isNew && (
                   <Form.Group className="mb-4">
                     <Form.Label className="block text-gray-700">Proveedor Articulo</Form.Label>
@@ -441,11 +461,12 @@ const ArticuloModal = ({
                   </Form.Group>
                 )} */}
 
-
-
                 <ModalFooter className="mt-4 flex justify-end">
                   <Button variant="secondary" onClick={onHide} className="mr-2">Cancelar</Button>
-                  <Button variant="primary" type="submit">Guardar</Button>
+                  <Button variant="primary" onClick={() => handleSaveUpdate(formik.values).catch(error => {
+                    console.error(error);
+                    toast.error("Ocurrió un error");
+                  })}>Guardar</Button>
                 </ModalFooter>
               </Form>
             </Modal.Body>

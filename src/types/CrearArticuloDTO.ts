@@ -1,6 +1,4 @@
 import { ModeloInventario } from "../enums/ModeloInventario";
-import { Proveedor } from "./Proveedor";
-
 export interface CrearArticuloDTO{
     nombre: string,
     
@@ -10,7 +8,7 @@ export interface CrearArticuloDTO{
 
     tiempoRevision: number,
 
-    idProveedorPred: Proveedor,
+    idProveedorPred: number,
 
     tiempoDemora: number,
 

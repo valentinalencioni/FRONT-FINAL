@@ -93,27 +93,27 @@ function ArticuloTable() {
 
     return (
         <>
-        <div className="flex justify-start space-x-2 p-4">
-             <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={() => handleClick("Nuevo articulo", initializableNewArticulo(), ModalType.CREATE)}
-            >
-                Nuevo articulo
-            </button>
-            <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={() => navigate('/articulos-faltantes')}
-            >
-                Artículos Faltantes
-            </button>
-            <button
-                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={() => navigate('/articulos-a-reponer')}
-            >
-                Artículos a Reponer
-            </button>
-        </div>
-           
+            <div className="flex justify-start space-x-2 p-4">
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={() => handleClick("Nuevo articulo", initializableNewArticulo(), ModalType.CREATE)}
+                >
+                    Nuevo articulo
+                </button>
+                <button
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={() => navigate('/articulos-faltantes')}
+                >
+                    Artículos Faltantes
+                </button>
+                <button
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={() => navigate('/articulos-a-reponer')}
+                >
+                    Artículos a Reponer
+                </button>
+            </div>
+
             <div className="overflow-x-auto">
                 <table className="table table-striped table-hover mt-2 shadow-sm">
                     <thead>
@@ -124,7 +124,8 @@ function ArticuloTable() {
                             <th className="py-2 px-4 border-b bg-dark-subtle">Proveedor predeterminado</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Modelo Inventario</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Ver detalle</th>
-                            <th className="py-2 px-4 border-b bg-dark-subtle">Editar</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Cambiar Modelo Inventario</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Cambiar Proveedor</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Borrar</th>
                         </tr>
                     </thead>
@@ -139,17 +140,28 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         {<DetalleButton onClick={() => handleClick("Ver detalles", articulo, ModalType.DETAIL)} />}
-                                    </div>                                  
+                                    </div>
                                 </td>
-                                {/* <td className="py-2 px-4 border-b text-center">
-                                    <div className="d-flex justify-content-center">
-                                        {<EditButton onClick={() => handleClick("Editar articulo", articulo, ModalType.UPDATE)} />}
-                                    </div>                                   
-                                </td> */}
+                                <td className="py-2 px-4 border-b text-center">
+                                    <button
+                                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4"
+                                        onClick={() => handleClick("Cambiar modelos Inventario", articulo, ModalType.INVEN)}
+                                    >
+                                        Cambiar Inventario
+                                    </button>
+                                </td>
+                                <td className="py-2 px-4 border-b text-center">
+                                    <button
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4"
+                                        onClick={() => handleClick("Cambiar Proveedor", articulo, ModalType.PROVE)}
+                                    >
+                                        Cambiar Proveedor
+                                    </button>
+                                </td>
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
-                                          {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
-                                    </div>                              
+                                        {<DeleteButton onClick={() => handleClick("Eliminar articulo", articulo, ModalType.DELETE)} />}
+                                    </div>
                                 </td>
                             </tr>
 
@@ -161,7 +173,7 @@ function ArticuloTable() {
                 <ArticuloModal
                     show={showModal}
                     onHide={() => setShowModal(false)}
-                    title={'nombre'}
+                    title={title}
                     modalType={modalType}
                     art={articulo}
                     refreshData={setRefreshData}
