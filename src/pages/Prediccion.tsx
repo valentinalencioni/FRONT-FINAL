@@ -1,7 +1,9 @@
-const Prediccion = () => {
+import PrediccionDemandaTabla from "../components/Tables/PrediccionDemandaTabla"
+
+const PrediccionDemanda = () => {
     return (
-      <div style={{padding: "20px"}}>Prediccion</div>
+      <div style={{padding: "20px"}}><PrediccionDemandaTabla/></div>
     )
   }
   
-  export default Prediccion
+  export default PrediccionDemanda

@@ -13,6 +13,7 @@ import { ProveedorService } from "../../services/ProveedorService";
 import { ModalType } from "../../enums/ModalType";
 import { ProveedorArticulo } from "../../types/ProveedorArticulo";
 import { ProveedorArticuloService } from "../../services/ProveedorArticuloService";
+import { CrearArticuloDTO } from "../../types/CrearArticuloDTO";
 
 type ArticuloModalProps = {
   show: boolean;
@@ -68,39 +69,27 @@ const ArticuloModal = ({
     fetchProveedores();
     fetchProvArt();
   }, []);
-  const initialValues = {
-    id: articulo?.id || 0,
-    cantidadAPedir: articulo?.cantidadAPedir || 0,
-    cantidadMaxima: articulo?.cantidadMaxima || 0,
-    cgi: articulo?.cgi || 0,
+  const initialValues: CrearArticuloDTO = {
+    nombre: articulo?.nombre || '',
+    stockActual: articulo?.stockActual || 0,
+    modeloInventario: articulo?.modeloInventario || "",
+    tiempoRevision: articulo?.tiempoRevision || 0,
+    idProveedorPred: articulo?.proveedorPred || 0,
+    tiempoDemora: 0,
     costoAlmacenamiento: articulo?.costoAlmacenamiento || 0,
     costoPedido: articulo?.costoPedido || 0,
-    demandaAnual: articulo?.demandaAnual || 0,
-    loteOptimo: articulo?.loteOptimo || 0,
-    modeloInventario: articulo?.modeloInventario || "",
-    nombre: articulo?.nombre || '',
-    precio: articulo?.precio || 0,
-    puntoPedido: articulo?.puntoPedido || 0,
-    stockActual: articulo?.stockActual || 0,
-    stockSeguridad: articulo?.stockSeguridad || 0,
-    tiempoRevision: articulo?.tiempoRevision || 0,
-    proveedorPred: articulo?.proveedorPred || 0,
-    metodoPred: articulo?.metodoPred || "",
-    nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
+    precioArticuloProveedor: 0,
+    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
   };
 
   //CREATE-UPDATE
-  const handleSaveUpdate = async (art: Articulo) => {
+  const handleSaveUpdate = async (articuloDTO: CrearArticuloDTO) => {
     try {
-      const isNew = art.id === 0;
-      if (isNew) {
-        await ArticuloService.createArticulo(art);
-        
-        toast.success("Artículo creado con éxito");
-      } else {
-        await ArticuloService.updateArticulo(art);
-        toast.success("Artículo actualizado con éxito");
-      }
+
+      await ArticuloService.createArticulo(articuloDTO);
+
+      toast.success("Artículo creado con éxito");
+
     } catch (error) {
       console.error(error);
       toast.error("Ocurrió un error");
@@ -145,9 +134,8 @@ const ArticuloModal = ({
 
   //Esquema YUP DE VALIDACION
   const validationSchema = Yup.object().shape({
-    id: Yup.number().integer().min(0),
     nombre: Yup.string().required('Se requiere el nombre del artículo'),
-    precio: Yup.number()
+    precioArticuloProveedor: Yup.number()
       .positive('El precio debe ser positivo')
       .required('El precio debe ser mayor a cero'),
     tiempoRevision: Yup.number()
@@ -168,7 +156,7 @@ const ArticuloModal = ({
     validationSchema: validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: (art: Articulo) => handleSaveUpdate(art),
+    onSubmit: (articuloDTO: CrearArticuloDTO) => handleSaveUpdate(articuloDTO),
   });
 
   return (
