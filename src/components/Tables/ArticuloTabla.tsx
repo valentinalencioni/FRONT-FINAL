@@ -145,7 +145,7 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b text-center">
                                     <button
                                         className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4"
-                                        onClick={() => handleClick("Cambiar modelos Inventario", articulo, ModalType.INVEN)}
+                                        onClick={() => handleClick("Cambiar Modelo Inventario de: " +articulo.nombre, articulo, ModalType.INVEN)}
                                     >
                                         Cambiar Inventario
                                     </button>
@@ -153,7 +153,7 @@ function ArticuloTable() {
                                 <td className="py-2 px-4 border-b text-center">
                                     <button
                                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4"
-                                        onClick={() => handleClick("Cambiar Proveedor", articulo, ModalType.PROVE)}
+                                        onClick={() => handleClick("Cambiar Proveedor de: " +articulo.nombre, articulo, ModalType.PROVE)}
                                     >
                                         Cambiar Proveedor
                                     </button>

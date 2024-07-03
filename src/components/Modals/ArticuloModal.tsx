@@ -1,19 +1,14 @@
-import { Articulo } from "../../types/Articulo";
-
 import { useEffect, useState } from "react";
+import { ModalType } from "../../enums/ModalType";
+import { Articulo } from "../../types/Articulo";
 import { Proveedor } from "../../types/Proveedor";
+import { ProveedorArticulo } from "../../types/ProveedorArticulo";
 import { ModeloInventario } from "../../enums/ModeloInventario";
+import { ProveedorService } from "../../services/ProveedorService";
+import { ProveedorArticuloService } from "../../services/ProveedorArticuloService";
 import { ArticuloService } from "../../services/ArticuloService";
 import { toast } from "react-toastify";
-import { useFormik } from "formik";
-import Modal from "react-bootstrap/esm/Modal";
-import * as Yup from "yup";
-import { Button, Form, FormLabel, ModalFooter, ModalTitle, Table } from "react-bootstrap";
-import { ProveedorService } from "../../services/ProveedorService";
-import { ModalType } from "../../enums/ModalType";
-import { ProveedorArticulo } from "../../types/ProveedorArticulo";
-import { ProveedorArticuloService } from "../../services/ProveedorArticuloService";
-import { CrearArticuloDTO } from "../../types/CrearArticuloDTO";
+import { Button, Form, Modal, Table } from "react-bootstrap";
 
 type ArticuloModalProps = {
   show: boolean;
@@ -22,144 +17,86 @@ type ArticuloModalProps = {
   modalType: ModalType;
   art: Articulo;
   refreshData: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
 const ArticuloModal = ({
   show,
   onHide,
   title,
   modalType,
-  art: articulo,
+  art,
   refreshData,
 }: ArticuloModalProps) => {
+
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState<Proveedor | null>(null);
-  const [isNew, setIsNew] = useState(articulo.id === 0);
-  const [provArt, setProvArt] = useState<ProveedorArticulo[]>([]);
-  const [provArtSelec, setprovArtSelec] = useState<ProveedorArticulo | null>(null);
-  const [articuloProvArt, setArticuloProvArt] = useState<Articulo | null>(null);
-
-  useEffect(() => {
-    setIsNew(articulo.id === 0);
-  }, [articulo]);
-
+  const [proveedorArt, setProvArt] = useState<ProveedorArticulo[]>([]);
+  const [provArtSeleccionado, setProvArtSeleccionado] = useState<ProveedorArticulo | null>(null);
+  const [tiempoRevision, setTiempoRevision] = useState<number>(0);
+  const [tiempoDemora, setTiempoDemora] = useState<number>(0);
+  const [modeloInventario, setModelosInventario] = useState<ModeloInventario>();
+  const [costoAlmacenamiento, setCostoAlmacenamiento] = useState<number>(0);
+  const [costoPedido, setCostoPedido] = useState<number>(0);
+  const [precioArticuloProveedor, setPrecioArticuloProveedor] = useState<number>(0);
+  const [stockActual, setStockActual] = useState<number>(0);
+  const [nombre, setNombre] = useState<string>("");
 
 
   useEffect(() => {
     const fetchProveedores = async () => {
       try {
-        const response = await ProveedorService.getProveedores();
-        setProveedores(response);
+        const proveedores = await ProveedorService.getProveedores();
+        setProveedores(Array.isArray(proveedores) ? proveedores : []);
       } catch (error) {
-        console.error(error);
-        toast.error("Error al cargar proveedores");
+        console.error("Error fetching proveedores: ", error);
+        setProveedores([]);
       }
     };
-
-    const fetchProvArt = async () => {
-      try {
-        const response = await ProveedorArticuloService.getProveedoresArt();
-        setProvArt(response);
-      } catch (error) {
-        console.error(error);
-        toast.error("Error al cargar proveedores");
-      }
+    const fetchProveedoresArt = async () => {
+      if (modalType === ModalType.PROVE && art.id)
+        try {
+          const proveedorArt = await ProveedorArticuloService.findbyArticulo(art.id);
+          setProvArt(Array.isArray(proveedorArt) ? proveedorArt : []);
+        } catch (error) {
+          console.error("Error fetching proveedorArt: ", error);
+          setProvArt([]);
+        }
     };
-
     fetchProveedores();
-    fetchProvArt();
-  }, []);
+    fetchProveedoresArt();
 
-  const initialValues: CrearArticuloDTO = {
-    nombre: '',
-    stockActual: 0,
-    modeloInventario: ModeloInventario.LOTE_FIJO,
-    tiempoRevision: 0,
-    idProveedorPred:proveedorSeleccionado?.id,
-    tiempoDemora: 0,
-    costoAlmacenamiento: 0,
-    costoPedido: 0,
-    precioArticuloProveedor: 0,
-    //nombreProveedor: provArt.find(pa => pa.proveedor.nombreProveedor === articulo?.proveedorPred.nombreProveedor || ''),
-  };
+  }, [refreshData]);
 
-  //Esquema YUP DE VALIDACION
-  const validationSchema = Yup.object().shape({
-    nombre: Yup.string().required('Se requiere el nombre del artículo'),
-    stockActual: Yup.number().integer('El stock actual debe ser un entero').required('Este es un campo obligatorio').positive('El stock actual debe ser positivo')
-      .nonNullable('El tiempo de revisión no puede ser nulo'),
-    modeloInventario: Yup.mixed().oneOf(Object.values(ModeloInventario)).required('Este es un campo obligatorio'),
-    tiempoRevision: Yup.number()
-      .positive('El tiempo de revisión debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El tiempo de revisión no puede ser nulo'),
-    idProveedorPred: Yup.object().shape({
-      id: Yup.number().required('Debe seleccionar un proveedor')
-    }).nullable().required('Este es un campo obligatorio'),
-
-    tiempoDemora: Yup.number()
-      .positive('El tiempo de demora debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El tiempo de demora no puede ser nulo'),
-
-    costoAlmacenamiento: Yup.number()
-      .positive('El costo de almacenamiento debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El costo de almacenamiento no puede ser nulo'),
-
-    costoPedido: Yup.number()
-      .positive('El costo de pedido debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El costo de pedido no puede ser nulo'),
-
-    precioArticuloProveedor: Yup.number()
-      .positive('El precio debe ser positivo')
-      .required('Este es un campo obligatorio')
-      .nonNullable('El precio no puede ser nulo'),
-  });
-
-
-
-  const formik = useFormik({
-    initialValues: initialValues,
-    validationSchema: validationSchema,
-    validateOnChange: true,
-    validateOnBlur: true,
-    onSubmit: (articuloDTO: CrearArticuloDTO) => handleSaveUpdate(articuloDTO),
-  });
-
-  //CREATE-UPDATE
-  const handleSaveUpdate = async (formikValues: CrearArticuloDTO) => {
-
-    const articuloDTO: CrearArticuloDTO = {
-      ...formikValues,
-      // No incluyas proveedorArticuloDTO en el DTO
-    }
-
+  const handleSave = async () => {
     try {
-      await ArticuloService.createArticulo(articuloDTO);
-      const proveedorArticulo = inicializarProvArt(articuloDTO);
-      setArticuloProvArt(articulo);
-      setprovArtSelec(proveedorArticulo);
-      toast.success("Artículo creado con éxito");
+      const crearArticuloDTO = {
+        nombre,
+        stockActual,
+        modeloInventario: ModeloInventario.LOTE_FIJO,
+        tiempoRevision,
+        idProveedorPred: proveedorSeleccionado?.id || 0,
+        tiempoDemora,
+        costoAlmacenamiento,
+        costoPedido,
+        precioArticuloProveedor,
+      };
+      await ArticuloService.createArticulo(crearArticuloDTO);
+
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Articulo creado exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error("Ocurrió un error");
+      toast.error('Error al agregar el articulo', { position: 'top-center' });
     }
-    onHide();
-    refreshData(prevState => !prevState);
   };
-
-
-  // const [calculado, setCalculado] = useState({ initialValues });
-
   const handleCalculate = async () => {
     try {
-      await ArticuloService.calcularTodo(articulo.id)
+      await ArticuloService.calcularTodo(art.id)
       toast.success("Valores calculados", {
         position: "top-center",
       })
-      console.log("Calculand")
+      console.log("Calculando")
       onHide();
       refreshData(prevState => !prevState);
     } catch (error) {
@@ -167,60 +104,185 @@ const ArticuloModal = ({
     }
   };
 
-  //DELETE
   const handleDelete = async () => {
-
     try {
-      await ArticuloService.deleteArticulo(articulo.id);
-      toast.success("Artículo eliminado", {
-        position: "top-center",
-      })
-
-      console.log("Voy a borrar")
+      await ArticuloService.deleteArticulo(art.id);
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Articulo eliminado exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error(error);
-      toast.error("Ocurrió un error al eliminar");
-    };
-    onHide();
-    refreshData(prevState => !prevState);
-  }
-
-
-
-
-
-  const inicializarProvArt = (formikValues: CrearArticuloDTO): ProveedorArticulo => {
-    return {
-      id: 0,
-      tiempoDemora: formikValues.tiempoDemora,
-      costoAlmacenamiento: formikValues.costoAlmacenamiento,
-      costoPedido: formikValues.costoPedido,
-      precioArticuloProveedor: formikValues.precioArticuloProveedor,
-      articulo: articuloProvArt, // Esto se llenará en el backend
-      proveedor: proveedorSeleccionado,
-    };
+      toast.error('Error al eliminar el articulo', { position: 'top-center' });
+    }
   };
+
+  const handleCambioProv = async () => {
+    try {
+      await ArticuloService.cambiarProveedor(art.proveedorPred.id,art.id);
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Proveedor cambiado exitosamente', { position: 'top-center' });
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al cambiar el proveedor', { position: 'top-center' });
+    }
+  };
+  const handleCambioMod = async () => {
+    try {
+      await ArticuloService.modeloArticulo(art.id);
+      onHide();
+      refreshData(prevState => !prevState);
+      toast.success('Modelo cambiado exitosamente', { position: 'top-center' });
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al cambiar el modelo', { position: 'top-center' });
+    }
+  };
+
+
   return (
     <>
-
       {modalType === ModalType.DELETE ? (
         <Modal show={show} onHide={onHide} centered backdrop="static">
-          <div className="p-6 bg-white rounded-lg shadow-xl">
-            <ModalTitle className="text-lg font-bold">{articulo.nombre}</ModalTitle>
-            <Modal.Body>
-              <p className="mt-4">¿Está seguro de querer eliminar el articulo <br /> <strong>{articulo.nombre}</strong>?</p>
-            </Modal.Body>
-            <ModalFooter className="mt-4 flex justify-end">
-              <Button variant="secondary" onClick={onHide} className="mr-2">No, volver</Button>
-              <Button variant="danger" onClick={handleDelete}>Sí, confirmar</Button>
-            </ModalFooter>
-          </div>
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>¿Seguro que desea eliminar este articulo?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleDelete}>
+              Eliminar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : modalType === ModalType.CREATE ? (
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="formBasicEmail">
+                <Form.Label>Nombre</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={nombre}
+                  placeholder="Ingrese el nombre del artículo"
+                  onChange={(e) => setNombre(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Seleccionar Proveedor</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={proveedorSeleccionado?.id || ""}
+                  onChange={(e) => setProveedorSeleccionado(proveedores.find(p => p.id === Number(e.target.value)) || null)}
+                >
+                  <option value="">Seleccione un proveedor</option>
+                  {proveedores.map(proveedor => (
+                    <option key={proveedor.id} value={proveedor.id}>
+                      {proveedor.nombreProveedor}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Stock Actual</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={stockActual}
+                  onChange={(e) => setStockActual(Number(e.target.value))}
+                  min={0}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formBasicEmail">
+                <Form.Label>Modelo de Inventario</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={modeloInventario}
+                  required
+                  onChange={(e) => setModelosInventario(e.target.value as ModeloInventario | undefined || ModeloInventario.LOTE_FIJO)}
+                >
+                  <option value={ModeloInventario.LOTE_FIJO}>Lote Fijo</option>
+                  <option value={ModeloInventario.INTERVALO_FIJO}>Intervalo Fijo</option>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Tiempo de Demora</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={tiempoDemora}
+                  onChange={(e) => setTiempoDemora(Number(e.target.value))}
+                  min={0}
+                  required
+
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Costo de Pedido</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={costoPedido}
+                  onChange={(e) => setCostoPedido(Number(e.target.value))}
+                  min={0}
+                  required
+
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Costo de Almacenamiento</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={costoAlmacenamiento}
+                  onChange={(e) => setCostoAlmacenamiento(Number(e.target.value))}
+                  min={0}
+                  step="0.01"
+                  required
+
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Precio Proveedor Artículo</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={precioArticuloProveedor}
+                  onChange={(e) => setPrecioArticuloProveedor(Number(e.target.value))}
+                  min={0}
+                  required
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Tiempo de Revision</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={tiempoRevision}
+                  onChange={(e) => setTiempoRevision(Number(e.target.value))}
+                  min={0}
+                  required
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleSave}>
+              Guardar
+            </Button>
+          </Modal.Footer>
         </Modal>
       ) : modalType === ModalType.DETAIL ? (
         <Modal show={show} onHide={onHide} centered backdrop="static">
 
           <Modal.Header closeButton>
-            <Modal.Title>{articulo.nombre}</Modal.Title>
+            <Modal.Title>{art.nombre}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="overflow-x-auto">
@@ -239,14 +301,14 @@ const ArticuloModal = ({
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="py-2 px-4 border-b">{articulo.nombre}</td>
-                    <td className="py-2 px-4 border-b">{articulo.precio}</td>
-                    <td className="py-2 px-4 border-b">{articulo.cgi}</td>
-                    <td className="py-2 px-4 border-b">{articulo.loteOptimo}</td>
-                    <td className="py-2 px-4 border-b">{articulo.puntoPedido}</td>
-                    <td className="py-2 px-4 border-b">{articulo.modeloInventario.replace('_', ' ')}</td>
-                    <td className="py-2 px-4 border-b">{articulo.cantidadAPedir}</td>
-                    <td className="py-2 px-4 border-b">{articulo.cantidadMaxima}</td>
+                    <td className="py-2 px-4 border-b">{art.nombre}</td>
+                    <td className="py-2 px-4 border-b">{art.precio}</td>
+                    <td className="py-2 px-4 border-b">{art.cgi}</td>
+                    <td className="py-2 px-4 border-b">{art.loteOptimo}</td>
+                    <td className="py-2 px-4 border-b">{art.puntoPedido}</td>
+                    <td className="py-2 px-4 border-b">{art.modeloInventario.replace('_', ' ')}</td>
+                    <td className="py-2 px-4 border-b">{art.cantidadAPedir}</td>
+                    <td className="py-2 px-4 border-b">{art.cantidadMaxima}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -257,224 +319,64 @@ const ArticuloModal = ({
             <Button variant="primary" onClick={handleCalculate}>Calcular Valores</Button>
           </Modal.Footer>
         </Modal>
-      ) : (
+      ): modalType === ModalType.INVEN ?(
         <Modal show={show} onHide={onHide} centered backdrop="static">
-          <div className="p-6 bg-white rounded-lg shadow-xl">
-            <Modal.Header closeButton>
-              <ModalTitle className="text-lg font-bold">Nuevo Articulo</ModalTitle>
-            </Modal.Header>
-            <Modal.Body>
-              <Form onSubmit={formik.handleSubmit}>
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Nombre</FormLabel>
-                  <Form.Control
-                    name="nombre"
-                    type="text"
-                    value={formik.values.nombre}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.nombre && formik.touched.nombre)}
-                    placeholder="Ingrese el nombre del artículo"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.nombre}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Precio</FormLabel>
-                  <Form.Control
-                    name="precioArticuloProveedor"
-                    type="number"
-                    value={formik.values.precioArticuloProveedor}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.precioArticuloProveedor && formik.touched.precioArticuloProveedor)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.precioArticuloProveedor}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                {/* tiempoRevision */}
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Tiempo de revisión</FormLabel>
-                  <Form.Control
-                    name="tiempoRevision"
-                    type="number"
-                    value={formik.values.tiempoRevision}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.tiempoRevision && formik.touched.tiempoRevision)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.tiempoRevision}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                {/* stockactual */}
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Stock actual</FormLabel>
-                  <Form.Control
-                    name="stockActual"
-                    type="number"
-                    value={formik.values.stockActual}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.stockActual && formik.touched.stockActual)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.stockActual}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Proveedor</FormLabel>
-                  <Form.Control
-                    as="select"
-                    value={proveedorSeleccionado?.id}
-                    onChange={(e) => {
-                      const selectedId = Number(e.target.value); // Convertir a número
-                      const proveedorSeleccionado = proveedores.find(proveedor => proveedor.id === selectedId) || null;
-                      setProveedorSeleccionado(proveedorSeleccionado);
-                      formik.setFieldValue("proveedorPred", proveedorSeleccionado);
-                    }}
-                    onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  >
-                    <option value="">Selecciona un Proveedor</option>
-                    {proveedores.map(proveedor => (
-                      <option key={proveedor.id} value={proveedor.id}>
-                        {proveedor.nombreProveedor}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.idProveedorPred}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Modelo Inventario</FormLabel>
-                  <Form.Control
-                    as="select"
-                    name="modeloInventario"
-                    value={formik.values.modeloInventario}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.modeloInventario && !!formik.errors.modeloInventario}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  >
-                    <option value="">Selecciona un Modelo de Inventario</option>
-                    {Object.values(ModeloInventario).map((modelo) => (
-                      <option key={modelo} value={modelo}>
-                        {modelo.replace('_', ' ').toLowerCase()}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.modeloInventario}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                {/* tiempoDemora */}
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Tiempo de demora del proveedor </FormLabel>
-                  <Form.Control
-                    name="tiempoDemora"
-                    type="number"
-                    value={formik.values.tiempoDemora}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.tiempoDemora && formik.touched.tiempoDemora)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.tiempoDemora}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Costo de almacenamiento</FormLabel>
-                  <Form.Control
-                    name="costoAlmacenamiento"
-                    type="number"
-                    value={formik.values.costoAlmacenamiento}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.costoAlmacenamiento && formik.touched.costoAlmacenamiento)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.costoPedido}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <FormLabel className="block text-gray-700">Costo de pedido</FormLabel>
-                  <Form.Control
-                    name="costoPedido"
-                    type="number"
-                    value={formik.values.costoPedido}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={Boolean(formik.errors.costoPedido && formik.touched.costoPedido)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.costoPedido}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                {/* {!isNew && (
-                  <Form.Group className="mb-4">
-                    <Form.Label className="block text-gray-700">Proveedor Articulo</Form.Label>
-                    <Form.Control
-                      as="select"
-                      name="provArt"
-                      value={proveedorSeleccionado?.id}
-                      onChange={(e) => {
-                        const selectedId = Number(e.target.value); // Convertir a número
-                        const provArtSelec = provArt.find(prov => prov.proveedor.id === selectedId) || null;
-                        setprovArtSelec(provArtSelec);
-                        formik.setFieldValue("provArt", provArtSelec);
-                      }}
-                      onBlur={formik.handleBlur}
-                      isInvalid={formik.touched.idProveedorPred && !!formik.errors.idProveedorPred}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
-                      <option value="">Selecciona un Proveedor</option>
-                      {provArt.map((prov) => (
-                        <option key={prov.proveedor.id} value={prov.proveedor.id}>
-                          {proveedores.find(p => p.id === prov.proveedor.id)?.nombreProveedor}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.errors.idProveedorPred?.id}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                )} */}
-
-                <ModalFooter className="mt-4 flex justify-end">
-                  <Button variant="secondary" onClick={onHide} className="mr-2">Cancelar</Button>
-                  <Button variant="primary" onClick={() => handleSaveUpdate(formik.values).catch(error => {
-                    console.error(error);
-                    toast.error("Ocurrió un error");
-                  })}>Guardar</Button>
-                </ModalFooter>
-              </Form>
-            </Modal.Body>
-          </div>
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>¿Seguro que desea cambiar el Modelo Inventario?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleCambioMod}>
+              Cambiar
+            </Button>
+          </Modal.Footer>
         </Modal>
-      )}
+      ): modalType === ModalType.PROVE ?(
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Seleccionar Proveedor al que desee cambiar</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={provArtSeleccionado?.id || ""}
+                  onChange={(e) => setProvArtSeleccionado(proveedorArt.find(p => p.id === Number(e.target.value)) || null)}
+                >
+                  <option value="">Seleccione un proveedor</option>
+                  {proveedorArt.map(proveedor => (
+                    <option key={proveedor.id} value={proveedor.id}>
+                      {proveedor.proveedor?.nombreProveedor}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleCambioProv}>
+              Guardar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ): null
+    }
+
     </>
   );
+
 };
 
 export default ArticuloModal;
+
+
