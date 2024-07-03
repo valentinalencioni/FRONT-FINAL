@@ -26,8 +26,16 @@ export const ProveedorArticuloService={
         }
 
         return await response.json();
-    }
+    },
     
+    findbyArticulo: async (articuloId: number): Promise<ProveedorArticulo[]> => {
+        const response = await fetch(`${BASE_URL}/api/v1/proveedorarticulo/findProveedoresByArticulo/${articuloId}`);
+        if (!response.ok) {
+            throw new Error('Error al encontrar Proveedor Articulo');
+        }
+        const data = await response.json();
+        return data;
+    }
 
 
 }
