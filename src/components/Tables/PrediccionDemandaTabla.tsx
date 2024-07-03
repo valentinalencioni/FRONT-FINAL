@@ -5,13 +5,11 @@ import { ModeloInventario } from "../../enums/ModeloInventario";
 import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
 import DeleteButton from "../DeleteButton/DeleteButton";
-
-
+import PrediccionDemandaModal from "../Modals/PrediccionDemandaModal";
 
 function PrediccionDemandaTabla() {
     const [prediccionesDemanda, setPrediccionesDemanda] = useState<PrediccionDemanda[]>([]);
     const [refreshData, setRefreshData] = useState(false);
-
 
     useEffect(() => {
         const fetchPrediccionesDemanda = async () => {
@@ -24,7 +22,6 @@ function PrediccionDemandaTabla() {
         };
 
         fetchPrediccionesDemanda();
-
     }, [refreshData]);
 
     const initializableNewPrediccionDemanda = (): PrediccionDemanda => ({
@@ -80,10 +77,8 @@ function PrediccionDemandaTabla() {
                 },
                 metodoPred: MetodoPrediccion.ESTACIONALIDAD,
             }
-
         },
         metodoPrediccion: MetodoPrediccion.ESTACIONALIDAD
-
     });
 
     const [prediccionDemanda, setPrediccionDemanda] = useState<PrediccionDemanda>(initializableNewPrediccionDemanda);
@@ -100,13 +95,18 @@ function PrediccionDemandaTabla() {
 
     return (
         <>
-            
-            <div className="flex justify-start space-x-2 ">
+            <div className="flex justify-start space-x-2 mb-4">
                 <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     onClick={() => handleClick("Nueva prediccion", initializableNewPrediccionDemanda(), ModalType.CREATE)}
                 >
                     Nueva Prediccion
+                </button>
+                <button
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => handleClick("Asignar Metodo", initializableNewPrediccionDemanda(), ModalType.UPDATE)}
+                >
+                    Asignar Método
                 </button>
             </div>
             <div className="overflow-x-auto">
@@ -140,13 +140,10 @@ function PrediccionDemandaTabla() {
                                 </td>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.articulo ? prediccionDemanda.articulo.nombre : "Sin Articulo"}</td>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.metodoPrediccion.replace("_", " ")}</td>
-                                
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         <DeleteButton
-                                            onClick={() =>
-                                                handleClick("Eliminar prediccion", prediccionDemanda, ModalType.DELETE)
-                                            }
+                                            onClick={() => handleClick("Eliminar prediccion", prediccionDemanda, ModalType.DELETE)}
                                         />
                                     </div>
                                 </td>
@@ -156,17 +153,18 @@ function PrediccionDemandaTabla() {
                 </table>
             </div>
 
-            {/* <OrdenCompraModal
-                title={title}
-                ord={ordenCompra}
-                modalType={modalType}
-                show={showModal}
-                onHide={() => setShowModal(false)}
-                refreshData={setRefreshData}
-            /> */}
+            {showModal && (
+                <PrediccionDemandaModal
+                    title={title}
+                    predi={prediccionDemanda}
+                    modalType={modalType}
+                    show={showModal}
+                    onHide={() => setShowModal(false)}
+                    refreshData={setRefreshData}
+                />
+            )}
         </>
     )
-
 }
 
 export default PrediccionDemandaTabla;
