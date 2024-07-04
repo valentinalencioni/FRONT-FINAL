@@ -6,7 +6,6 @@ import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import PrediccionDemandaModal from "../Modals/PrediccionDemandaModal";
-
 function PrediccionDemandaTabla() {
     const [prediccionesDemanda, setPrediccionesDemanda] = useState<PrediccionDemanda[]>([]);
     const [refreshData, setRefreshData] = useState(false);
@@ -155,16 +154,15 @@ function PrediccionDemandaTabla() {
 
             {showModal && (
                 <PrediccionDemandaModal
-                    title={title}
-                    predi={prediccionDemanda}
-                    modalType={modalType}
-                    show={showModal}
-                    onHide={() => setShowModal(false)}
-                    refreshData={setRefreshData}
-                />
+                title={title}
+                predi={prediccionDemanda}
+                modalType={modalType}
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                refreshData={setRefreshData}
+              />
             )}
         </>
     )
 }
-
 export default PrediccionDemandaTabla;

@@ -5,9 +5,7 @@ import { Articulo } from "../../types/Articulo";
 import { ArticuloService } from "../../services/ArticuloService";
 import { PrediccionDemandaService } from "../../services/PrediccionDemandaService";
 import { toast } from "react-toastify";
-import { Modal, Button } from "react-bootstrap";
-import { Table } from "react-bootstrap-icons";
-import { Form } from "react-router-dom";
+import { Modal, Button, Form } from "react-bootstrap";
 
 type PrediccionDemandaModalProps = {
   show: boolean;
@@ -36,7 +34,7 @@ const PrediccionDemandaModal = ({
   const [mesPrediccion, setMesPrediccion] = useState<number>(0);
   const [anioPrediccion, setAnioPrediccion] = useState<number>(0);
   const [alfa, setAlfa] = useState<number>(0);
-  const [cantidadPeriodosAPredecir, setCantidadPeriodosPredecir] = useState<number>(0);
+  const [cantidadPeriodosAPredecir, setCantidadPeriodosAPredecir] = useState<number>(0);
   const [cantidadPeriodosAUsar, setCantidadPeriodosAUsar] = useState<number>(0); //cantidadPeriodosAUsar: number;
   const [cantidadDemandaAnual, setCantidadDemandaAnual] = useState<number>(0);
 
@@ -78,7 +76,7 @@ const PrediccionDemandaModal = ({
     }
   };
 
-  const handleErorr = async () => {
+  const handleError = async () => {
     try {
       const parametrosPrediccionDTO = {
         articuloId: articuloSeleccionado?.id || 0,
@@ -113,6 +111,19 @@ const PrediccionDemandaModal = ({
       toast.error('Error al eliminar demanda', { position: 'top-center' });
     }
   };
+  const handleFechaDesdeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaDesde(new Date(event.target.value));
+  };
+
+  const handleFechaHastaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaHasta(new Date(event.target.value));
+  };
+  const handleCoeficientesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value;
+    const coeficientesArray = input.split(';').map((coef) => parseFloat(coef.trim()));
+    setCoeficientes(coeficientesArray);
+  };
+
 
   return (
     <>
@@ -122,7 +133,7 @@ const PrediccionDemandaModal = ({
             <Modal.Title>{title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>¿Seguro que desea eliminar este articulo?</p>
+            <p>¿Seguro que desea eliminar esta prediccion?</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>
@@ -134,15 +145,222 @@ const PrediccionDemandaModal = ({
           </Modal.Footer>
         </Modal>
       ) : modalType === ModalType.CREATE ? (
-        
-      ) :  (
-       
-      ) 
-      }
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Seleccionar Articulo</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={articuloSeleccionado?.id || ""}
+                  onChange={(e) => setArticuloSeleccionado(articulos.find(p => p.id === Number(e.target.value)) || null)}
+                >
+                  <option value="">Seleccione un articulp</option>
+                  {articulos.map(articulo => (
+                    <option key={articulo.id} value={articulo.id}>
+                      {articulo.nombre}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Fecha Desde</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={fechaDesde.toISOString().split('T')[0]}
+                  onChange={handleFechaDesdeChange}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Fecha Hasta</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={fechaHasta.toISOString().split('T')[0]}
+                  onChange={handleFechaHastaChange}
+                />
+              </Form.Group>
+              
+              <Form.Group>
+                <Form.Label>Coeficientes</Form.Label>
+                <Form.Control type="text"
+                 value={coeficientes.join(';')} 
+                 onChange={handleCoeficientesChange} 
+                 placeholder="Ingrese los coeficientes separados por punto y coma" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Mes Prediccion</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={mesPrediccion}
+                  onChange={(e) => setMesPrediccion(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Año Prediccion</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={anioPrediccion}
+                  onChange={(e) => setAnioPrediccion(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Alfa</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={alfa}
+                  onChange={(e) => setAlfa(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Cantidad Periodos A Predecir</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={cantidadPeriodosAPredecir}
+                  onChange={(e) => setCantidadPeriodosAPredecir(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Cantidad Periodos A Usar</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={cantidadPeriodosAUsar}
+                  onChange={(e) => setCantidadPeriodosAUsar(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Demanda Anual de articulo</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={articuloSeleccionado?.demandaAnual || ""}
+                  onChange={(e) => setCantidadDemandaAnual(Number(e.target.value))}
+                  disabled
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleSave}>
+              Guardar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ): modalType === ModalType.UPDATE ? (
+        <Modal show={show} onHide={onHide} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>{title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Seleccionar Articulo</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={articuloSeleccionado?.id || ""}
+                  onChange={(e) => setArticuloSeleccionado(articulos.find(p => p.id === Number(e.target.value)) || null)}
+                >
+                  <option value="">Seleccione un articulp</option>
+                  {articulos.map(articulo => (
+                    <option key={articulo.id} value={articulo.id}>
+                      {articulo.nombre}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Fecha Desde</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={fechaDesde.toISOString().split('T')[0]}
+                  onChange={handleFechaDesdeChange}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Fecha Hasta</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={fechaHasta.toISOString().split('T')[0]}
+                  onChange={handleFechaHastaChange}
+                />
+              </Form.Group>
+              
+              <Form.Group>
+                <Form.Label>Coeficientes</Form.Label>
+                <Form.Control type="text"
+                 value={coeficientes.join(';')} 
+                 onChange={handleCoeficientesChange} 
+                 placeholder="Ingrese los coeficientes separados por punto y coma" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Mes Prediccion</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={mesPrediccion}
+                  onChange={(e) => setMesPrediccion(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Año Prediccion</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={anioPrediccion}
+                  onChange={(e) => setAnioPrediccion(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Alfa</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={alfa}
+                  onChange={(e) => setAlfa(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Cantidad Periodos A Predecir</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={cantidadPeriodosAPredecir}
+                  onChange={(e) => setCantidadPeriodosAPredecir(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Cantidad Periodos A Usar</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={cantidadPeriodosAUsar}
+                  onChange={(e) => setCantidadPeriodosAUsar(Number(e.target.value))}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Demanda Anual de articulo</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={articuloSeleccionado?.demandaAnual || ""}
+                  onChange={(e) => setCantidadDemandaAnual(Number(e.target.value))}
+                  disabled
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleError}>
+              Guardar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : null 
+    }
+  </>
+  );
+};
 
-    </>
-  )
+export default PrediccionDemandaModal
 
-
-
-}
