@@ -30,12 +30,13 @@ const PrediccionDemandaModal = ({
   const [articuloSeleccionado, setArticuloSeleccionado] = useState<Articulo | null>(null);
   const [fechaDesde, setFechaDesde] = useState<Date>(new Date());
   const [fechaHasta, setFechaHasta] = useState<Date>(new Date());
-  const [coeficientes, setCoeficientes] = useState<number[]>([]);
+  const [coeficientes, setCoeficientes] = useState<Array<number>>([]);
   const [mesPrediccion, setMesPrediccion] = useState<number>(0);
   const [anioPrediccion, setAnioPrediccion] = useState<number>(0);
   const [alfa, setAlfa] = useState<number>(0);
   const [cantidadPeriodosAPredecir, setCantidadPeriodosAPredecir] = useState<number>(0);
   const [cantidadPeriodosAUsar, setCantidadPeriodosAUsar] = useState<number>(0); //cantidadPeriodosAUsar: number;
+  const [coeficientesError, setCoeficientesError]= useState <string>('');
   const [cantidadDemandaAnual, setCantidadDemandaAnual] = useState<number>(0);
 
   useEffect(() => {
@@ -118,12 +119,17 @@ const PrediccionDemandaModal = ({
   const handleFechaHastaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaHasta(new Date(event.target.value));
   };
-  const handleCoeficientesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const coeficientesArray = input.split(';').map((coef) => parseFloat(coef.trim()));
-    setCoeficientes(coeficientesArray);
-  };
-
+  
+  const handleCoeficientesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const values = e.target.value.split(',').map(Number);
+    const allValid = values.every(val => val >= 0);
+    if (allValid) {
+        setCoeficientes(values);
+        setCoeficientesError('');
+    } else {
+        setCoeficientesError('Todos los valores deben ser 0 o mayores.');
+    }
+};
 
   return (
     <>
@@ -188,7 +194,9 @@ const PrediccionDemandaModal = ({
                 <Form.Control type="text"
                  value={coeficientes.join(';')} 
                  onChange={handleCoeficientesChange} 
-                 placeholder="Ingrese los coeficientes separados por punto y coma" />
+                 placeholder="Ingrese los coeficientes separados por punto y coma"
+                  />
+                  {coeficientesError && <Form.Text className="text-danger">{coeficientesError}</Form.Text>}
               </Form.Group>
               <Form.Group>
                 <Form.Label>Mes Prediccion</Form.Label>
@@ -294,7 +302,9 @@ const PrediccionDemandaModal = ({
                 <Form.Control type="text"
                  value={coeficientes.join(';')} 
                  onChange={handleCoeficientesChange} 
-                 placeholder="Ingrese los coeficientes separados por punto y coma" />
+                 placeholder="Ingrese los coeficientes separados por punto y coma"
+                  />
+                  {coeficientesError && <Form.Text className="text-danger">{coeficientesError}</Form.Text>}
               </Form.Group>
               <Form.Group>
                 <Form.Label>Mes Prediccion</Form.Label>

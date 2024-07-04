@@ -2,7 +2,7 @@ export interface ParametrosPrediccionDTO {
   articuloId: number;
   fechaDesde: Date;
   fechaHasta: Date;
-  coeficientes: number[];
+  coeficientes: Array<number>;
   mesPrediccion: number;
   anioPrediccion: number;
   alfa: number;
