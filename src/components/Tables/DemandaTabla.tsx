@@ -92,8 +92,8 @@ function DemandaTabla() {
                         {demandas.map(demanda => (
                             <tr>
                                 <td className="py-2 px-4 border-b">{demanda.id}</td>
-                                <td className="py-2 px-4 border-b">{demanda.fechaDesde}</td>
-                                <td className="py-2 px-4 border-b">{demanda.fechaHasta}</td>
+                                <td className="py-2 px-4 border-b">{demanda.fechaDesde.toISOString()}</td>
+                                <td className="py-2 px-4 border-b">{demanda.fechaHasta.toISOString()}</td>
                                 <td className="py-2 px-4 border-b">{demanda.totalDemanda}</td>
                                 <td className="py-2 px-4 border-b">{demanda.articulo.id}</td>
                                 <td className="py-2 px-4 border-b text-center">

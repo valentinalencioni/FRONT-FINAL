@@ -6,6 +6,7 @@ import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 import { ModalType } from "../../enums/ModalType";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import PrediccionDemandaModal from "../Modals/PrediccionDemandaModal";
+import { useNavigate } from "react-router-dom";
 function PrediccionDemandaTabla() {
     const [prediccionesDemanda, setPrediccionesDemanda] = useState<PrediccionDemanda[]>([]);
     const [refreshData, setRefreshData] = useState(false);
@@ -91,6 +92,8 @@ function PrediccionDemandaTabla() {
         setShowModal(true);
         setModalType(modal);
     };
+    const navigate = useNavigate();
+
 
     return (
         <>
@@ -106,6 +109,12 @@ function PrediccionDemandaTabla() {
                     onClick={() => handleClick("Asignar Metodo", initializableNewPrediccionDemanda(), ModalType.UPDATE)}
                 >
                     Asignar Método
+                </button>
+                <button
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => navigate('/metodos')}
+                >
+                    Ver metodos
                 </button>
             </div>
             <div className="overflow-x-auto">
@@ -126,7 +135,7 @@ function PrediccionDemandaTabla() {
                             <tr key={prediccionDemanda.id}>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.id}</td>
                                 <td className="py-2 px-4 border-b">
-                                    {prediccionDemanda.fechaPrediccion}
+                                    {prediccionDemanda.fechaPrediccion.toISOString()}
                                 </td>
                                 <td className="py-2 px-4 border-b">
                                     {Number(prediccionDemanda.valorPrediccion).toLocaleString("es-ES", {

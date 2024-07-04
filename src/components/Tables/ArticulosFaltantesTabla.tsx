@@ -36,10 +36,10 @@ function ArticulosFaltantesTabla() {
                 <table className="min-w-full bg-white border border-gray-300">
                     <thead>
                         <tr>
-                            <th className="py-2 px-4 border-b">ID</th>
-                            <th className="py-2 px-4 border-b">Nombre</th>
-                            <th className="py-2 px-4 border-b">Stock Actual</th>
-                            <th className="py-2 px-4 border-b">Stock de Seguridad</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">ID</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Nombre</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Stock Actual</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Stock de Seguridad</th>
 
                         </tr>
                     </thead>

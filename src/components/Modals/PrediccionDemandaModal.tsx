@@ -280,7 +280,7 @@ const PrediccionDemandaModal = ({
                   value={articuloSeleccionado?.id || ""}
                   onChange={(e) => setArticuloSeleccionado(articulos.find(p => p.id === Number(e.target.value)) || null)}
                 >
-                  <option value="">Seleccione un articulp</option>
+                  <option value="">Seleccione un articulo</option>
                   {articulos.map(articulo => (
                     <option key={articulo.id} value={articulo.id}>
                       {articulo.nombre}

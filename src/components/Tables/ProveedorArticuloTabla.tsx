@@ -93,6 +93,9 @@ function ProveedorArticuloTabla() {
     const navigate = useNavigate();
     return (
         <>
+            <div className="p-4">
+                <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control" />
+            </div>
             <div className="flex justify-start space-x-2 ">
 
                 <button
@@ -110,9 +113,6 @@ function ProveedorArticuloTabla() {
 
             </div>
 
-            <div className="p-4">
-                <input value={search} onChange={searcher} type="text" placeholder="Buscar por nombre de Articulo" className="form-control" />
-            </div>
             <div className="overflow-x-auto">
                 <table className="table table-striped table-hover mt-2 shadow-sm">
                     <thead>
