@@ -121,7 +121,7 @@ const PrediccionDemandaModal = ({
   };
   
   const handleCoeficientesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const values = e.target.value.split(',').map(Number);
+    const values = e.target.value.split(';').map(Number);
     const allValid = values.every(val => val >= 0);
     if (allValid) {
         setCoeficientes(values);
