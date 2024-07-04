@@ -124,7 +124,7 @@ function PrediccionDemandaTabla() {
                             <th className="py-2 px-4 border-b bg-dark-subtle">ID</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Fecha de prediccion</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Valor prediccion</th>
-                            <th className="py-2 px-4 border-b bg-dark-subtle">ID Demanda</th>
+                           
                             <th className="py-2 px-4 border-b bg-dark-subtle">Nombre Articulo</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Metodo de Prediccion</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Eliminar</th>
@@ -143,9 +143,7 @@ function PrediccionDemandaTabla() {
                                         maximumFractionDigits: 2,
                                     })}
                                 </td>
-                                <td className="py-2 px-4 border-b">
-                                    {prediccionDemanda.demanda ? prediccionDemanda.demanda.id : "Sin Demanda"}
-                                </td>
+                            
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.articulo ? prediccionDemanda.articulo.nombre : "Sin Articulo"}</td>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.metodoPrediccion ? prediccionDemanda.metodoPrediccion.replace("_", " ") : "Sin Metodo"}</td>
                                 <td className="py-2 px-4 border-b text-center">

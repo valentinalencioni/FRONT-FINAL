@@ -121,25 +121,28 @@ const ArticuloModal = ({
     const provPredNuevo = provArtSeleccionado?.proveedor?.id || 0;
     try {
       await ArticuloService.cambiarProveedor(provPredNuevo,art.id);
-      onHide();
       refreshData(prevState => !prevState);
       toast.success('Proveedor cambiado exitosamente', { position: 'top-center' });
+      onHide();
     } catch (error) {
       console.error(error);
       toast.success('Proveedor Cambiado exitosamente', { position: 'top-center' });
       refreshData(prevState => !prevState);
+      onHide();
     }
   };
   const handleCambioMod = async () => {
     try {
       await ArticuloService.modeloArticulo(art.id);
-      onHide();
+      
       refreshData(prevState => !prevState);
       toast.success('Modelo cambiado exitosamente', { position: 'top-center' });
+      onHide();
     } catch (error) {
       console.error(error);
       refreshData(prevState => !prevState);
       toast.success('Modelo cambiado exitosamente', { position: 'top-center' });
+      onHide();
     }
   };
 
