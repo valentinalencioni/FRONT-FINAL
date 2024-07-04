@@ -47,7 +47,7 @@ function MetodosTabla (){
                             <tr>
                                 <td className="py-2 px-4 border-b">{articulo.id}</td>
                                 <td className="py-2 px-4 border-b">{articulo.nombre}</td>
-                                <td className="py-2 px-4 border-b">{articulo.metodoPred}</td>
+                                <td className="py-2 px-4 border-b">{articulo.metodoPred?.replace("_", " ") ? articulo.metodoPred:"Sin Metodo Predeterminado" }</td>
                             </tr>
 
                         ))}

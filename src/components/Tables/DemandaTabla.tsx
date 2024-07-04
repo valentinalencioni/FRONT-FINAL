@@ -84,7 +84,7 @@ function DemandaTabla() {
                             <th className="py-2 px-4 border-b bg-dark-subtle">Fecha hasta</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Total demanda</th>
 
-                            <th className="py-2 px-4 border-b bg-dark-subtle">Id Articulo</th>
+                            <th className="py-2 px-4 border-b bg-dark-subtle">Articulo</th>
                             <th className="py-2 px-4 border-b bg-dark-subtle">Eliminar</th>
                         </tr>
                     </thead>
@@ -92,10 +92,10 @@ function DemandaTabla() {
                         {demandas.map(demanda => (
                             <tr>
                                 <td className="py-2 px-4 border-b">{demanda.id}</td>
-                                <td className="py-2 px-4 border-b">{demanda.fechaDesde.toISOString()}</td>
-                                <td className="py-2 px-4 border-b">{demanda.fechaHasta.toISOString()}</td>
+                                <td className="py-2 px-4 border-b">{demanda.fechaDesde}</td>
+                                <td className="py-2 px-4 border-b">{demanda.fechaHasta}</td>
                                 <td className="py-2 px-4 border-b">{demanda.totalDemanda}</td>
-                                <td className="py-2 px-4 border-b">{demanda.articulo.id}</td>
+                                <td className="py-2 px-4 border-b">{demanda.articulo.nombre}</td>
                                 <td className="py-2 px-4 border-b text-center">
                                     <div className="d-flex justify-content-center">
                                         {<DeleteButton onClick={() => handleClick("Eliminar demanda", demanda, ModalType.DELETE)} />}

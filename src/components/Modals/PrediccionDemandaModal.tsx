@@ -6,6 +6,7 @@ import { ArticuloService } from "../../services/ArticuloService";
 import { PrediccionDemandaService } from "../../services/PrediccionDemandaService";
 import { toast } from "react-toastify";
 import { Modal, Button, Form } from "react-bootstrap";
+import { MetodoPrediccion } from "../../enums/MetodoPrediccion";
 
 type PrediccionDemandaModalProps = {
   show: boolean;
@@ -38,6 +39,7 @@ const PrediccionDemandaModal = ({
   const [cantidadPeriodosAUsar, setCantidadPeriodosAUsar] = useState<number>(0); //cantidadPeriodosAUsar: number;
   const [coeficientesError, setCoeficientesError] = useState<string>('');
   const [cantidadDemandaAnual, setCantidadDemandaAnual] = useState<number>(0);
+  const [metodoPrediccion, setMetodoPrediccion] = useState<MetodoPrediccion | null>(null);
 
   useEffect(() => {
     const fetchArticulos = async () => {
@@ -65,7 +67,8 @@ const PrediccionDemandaModal = ({
         alfa: alfa,
         cantidadPeriodosAPredecir: cantidadPeriodosAPredecir,
         cantidadPeriodosAUsar: cantidadPeriodosAUsar,
-        cantidadDemandaAnual: articuloSeleccionado?.demandaAnual || 0
+        cantidadDemandaAnual: articuloSeleccionado?.demandaAnual || 0,
+        metodoPrediccion: null
       };
       await PrediccionDemandaService.createPrediccion(parametrosPrediccionDTO);
       onHide();
@@ -89,15 +92,18 @@ const PrediccionDemandaModal = ({
         alfa: alfa,
         cantidadPeriodosAPredecir: cantidadPeriodosAPredecir,
         cantidadPeriodosAUsar: cantidadPeriodosAUsar,
-        cantidadDemandaAnual: articuloSeleccionado?.demandaAnual || 0
+        cantidadDemandaAnual: articuloSeleccionado?.demandaAnual || 0,
+        metodoPrediccion: null
       };
       await PrediccionDemandaService.calcularError(parametrosPrediccionDTO);
       onHide();
       refreshData(prevState => !prevState);
-      toast.success('Prediccion demanda calculada exitosamente', { position: 'top-center' });
+      //toast.success('Prediccion demanda calculada exitosamente', { position: 'top-center' });
     } catch (error) {
       console.error('Error al calcular la demanda:', error);
-      toast.error('Error al calcular demanda', { position: 'top-center' });
+      //toast.success('Prediccion demanda calculada exitosamente', { position: 'top-center' });
+      onHide();
+      refreshData(prevState => !prevState);
     }
   };
 

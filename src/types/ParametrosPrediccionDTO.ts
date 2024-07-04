@@ -1,3 +1,5 @@
+import { MetodoPrediccion } from "../enums/MetodoPrediccion";
+
 export interface ParametrosPrediccionDTO {
   articuloId: number;
   fechaDesde: Date;
@@ -9,4 +11,5 @@ export interface ParametrosPrediccionDTO {
   cantidadPeriodosAPredecir: number;
   cantidadPeriodosAUsar: number;
   cantidadDemandaAnual: number;
+  metodoPrediccion: MetodoPrediccion | null;
 }

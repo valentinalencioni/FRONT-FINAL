@@ -135,7 +135,7 @@ function PrediccionDemandaTabla() {
                             <tr key={prediccionDemanda.id}>
                                 <td className="py-2 px-4 border-b">{prediccionDemanda.id}</td>
                                 <td className="py-2 px-4 border-b">
-                                    {prediccionDemanda.fechaPrediccion.toISOString()}
+                                    {prediccionDemanda.fechaPrediccion}
                                 </td>
                                 <td className="py-2 px-4 border-b">
                                     {Number(prediccionDemanda.valorPrediccion).toLocaleString("es-ES", {
